@@ -287,7 +287,8 @@
 (defnc f3 "doc string" [x y z] (+ x y z))
 (defnc f4 "f4 doc" [w x y z] (+ w x y z))
 (defnc f5 "f5 doc" [v w x y z] (+ v w x y z))
-
+(defnc f6 "f6 doc" [x y] (- x y))
+(defnc f7 "f7 doc" [x y z] (* (- x y) z))
 
 (deftest test-0500
   (fact "defnc defines a curried two-arg function"
@@ -342,3 +343,23 @@
 	  (f (range 5))) => [0 1 4 9 16]
 	(let [k (curry take 2)]
 	  (map (k 2) [[1 2 3] [0 1 2] [88 99 100]])) => '((1 2) (0 1) (88 99))))
+
+
+(deftest test-0580
+  (fact "flip swaps the first two args in a function"
+	(let [f (fn [x y] (- x y))
+	      g (flip f)]
+	  (g 4 10) => 6))
+  (fact "flip swaps the first two args in a curried function"
+	(let [g (flip f6)]
+	  (g 4 10) => 6)))
+
+
+(deftest test-0585
+  (fact "flip swaps the first two args in a function"
+	(let [f (fn [x y z] (* (- x y) z))
+	      g (flip f)]
+	  (g 4 10 8) => 48))
+  (fact "flip swaps the first two args in a curried function"
+	(let [g (flip f7)]
+	  (g 4 10 8) => 48)))

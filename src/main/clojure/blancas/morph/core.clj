@@ -417,3 +417,10 @@
   (let [args (vec (repeatedly n gensym))
         body (list* f args)]
     `(mcf ~args ~body)))
+
+
+(defn flip
+  "Returns a version of f with its first two arguments reversed."
+  [f]
+  (fn [x y & more]
+    (apply f y x more)))
