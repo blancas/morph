@@ -396,7 +396,24 @@
             ([~v ~w] (mcf [~x ~y ~z] ~@body))
             ([~v ~w ~x] (mcf [~y ~z] ~@body))
             ([~v ~w ~x ~y] (fn [~z] (~'f ~v ~w ~x ~y ~z)))
-            ([~v ~w ~x ~y ~z] ~@body)))))
+            ([~v ~w ~x ~y ~z] ~@body)))
+    6  (let [[u v w x y z] args]
+	 `(fn f
+            ([~u] (mcf [~v ~w ~x ~y ~z] ~@body))
+            ([~u ~v] (mcf [~w ~x ~y ~z] ~@body))
+            ([~u ~v ~w] (mcf [~x ~y ~z] ~@body))
+            ([~u ~v ~w ~x] (mcf [~y ~z] ~@body))
+            ([~u ~v ~w ~x ~y] (fn [~z] (~'f ~u ~v ~w ~x ~y ~z)))
+            ([~u ~v ~w ~x ~y ~z] ~@body)))
+    7  (let [[t u v w x y z] args]
+	 `(fn f
+            ([~t] (mcf [~u ~v ~w ~x ~y ~z] ~@body))
+            ([~t ~u] (mcf [~v ~w ~x ~y ~z] ~@body))
+            ([~t ~u ~v] (mcf [~w ~x ~y ~z] ~@body))
+            ([~t ~u ~v ~w] (mcf [~x ~y ~z] ~@body))
+            ([~t ~u ~v ~w ~x] (mcf [~y ~z] ~@body))
+            ([~t ~u ~v ~w ~x ~y] (fn [~z] (~'f ~t ~u ~v ~w ~x ~y ~z)))
+            ([~t ~u ~v ~w ~x ~y ~z] ~@body)))))
 
 
 (defmacro defnc

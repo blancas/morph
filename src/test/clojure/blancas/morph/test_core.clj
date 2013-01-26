@@ -287,8 +287,10 @@
 (defnc f3 "doc string" [x y z] (+ x y z))
 (defnc f4 "f4 doc" [w x y z] (+ w x y z))
 (defnc f5 "f5 doc" [v w x y z] (+ v w x y z))
-(defnc f6 "f6 doc" [x y] (- x y))
-(defnc f7 "f7 doc" [x y z] (* (- x y) z))
+(defnc f6 "f6 doc" [u v w x y z] (+ u v w x y z))
+(defnc f7 "f7 doc" [t u v w x y z] (+ t u v w x y z))
+(defnc k2 "k2 doc" [x y] (- x y))
+(defnc k3 "k3 doc" [x y z] (* (- x y) z))
 
 (deftest test-0500
   (fact "defnc defines a curried two-arg function"
@@ -333,6 +335,30 @@
           (map (k2 5) (range 5))) => [20 21 22 23 24]))
 
 
+(deftest test-0520
+  (fact "defnc defines a curried six-arg function"
+	(f6 1 2 3 4 5 6) => 21
+        (map (f6 1 2 3 4 5) (range 5)) => [15 16 17 18 19])
+  (fact "a curried function can be called as a total function"
+	(map (f6 5 3 2 4) (range 5) (range 5)) => [14 16 18 20 22])
+  (fact "a curried function can further return curried functions"
+        (let [k3 (f6 5 5 3)
+	      k2 (k3 5)]
+          (map (k2 5) (range 5))) => [23 24 25 26 27]))
+
+
+(deftest test-0525
+  (fact "defnc defines a curried seven-arg function"
+	(f7 1 2 3 4 5 6 7) => 28
+        (map (f7 1 2 3 4 5 6) (range 5)) => [21 22 23 24 25])
+  (fact "a curried function can be called as a total function"
+	(map (f7 5 3 2 4 1) (range 5) (range 5)) => [15 17 19 21 23])
+  (fact "a curried function can further return curried functions"
+        (let [k3 (f7 5 5 3 4)
+	      k2 (k3 5)]
+          (map (k2 5) (range 5))) => [27 28 29 30 31]))
+
+
 (deftest test-0550
   (fact "(curry) makes a curried function off a regular one"
 	(let [k (curry reduce 3)
@@ -351,7 +377,7 @@
 	      g (flip f)]
 	  (g 4 10) => 6))
   (fact "flip swaps the first two args in a curried function"
-	(let [g (flip f6)]
+	(let [g (flip k2)]
 	  (g 4 10) => 6)))
 
 
@@ -361,5 +387,5 @@
 	      g (flip f)]
 	  (g 4 10 8) => 48))
   (fact "flip swaps the first two args in a curried function"
-	(let [g (flip f7)]
+	(let [g (flip k3)]
 	  (g 4 10 8) => 48)))
