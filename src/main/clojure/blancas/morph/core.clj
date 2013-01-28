@@ -87,9 +87,9 @@
   "The identity value for the Product monoid."  
   (->Product 1))
 
-;; +-------+
-;; |  Any  |
-;; +-------+
+;; +---------------------+
+;; |  Any -- logical OR  |
+;; +---------------------+
 
 (deftype Any [any]
   Object
@@ -112,9 +112,9 @@
   "The identity value for the Any monoid."
   (->Any false))
 
-;; +-------+
-;; |  All  |
-;; +-------+
+;; +----------------------+
+;; |  All -- logical AND  |
+;; +----------------------+
 
 (deftype All [all]
   Object
@@ -416,7 +416,7 @@
             ([~t ~u ~v ~w ~x ~y ~z] ~@body)))))
 
 
-(defmacro defnc
+(defmacro defcurry
   "Defines a curried function that may be called as a partial
    or total function using the regular function-call notation.
    Partial applications yield functions that work the same way.
@@ -424,16 +424,21 @@
    and returns its value. The comment string is required."
   [fname doc args & body]
    `(do (def ~fname ~doc (mcf ~args ~@body))
-	(alter-meta! (var ~fname) assoc :arglists (list '~args))))
+	(alter-meta! (var ~fname) assoc :arglists (list '~args))
+	(var ~fname)))
 
 
 (defmacro curry
-  "Returns a curried version of a function for a specific
-   number of arguments."
-  [f n]
-  (let [args (vec (repeatedly n gensym))
-        body (list* f args)]
-    `(mcf ~args ~body)))
+  "Returns a curried version of a function. Variadic functions
+   must supplied the number of arguments."
+  ([f]
+    (let [args (-> f resolve meta :arglists first)]
+      (assert (not (some #{'&} args)) "can't curry a variadic function")
+      `(curry ~f ~(count args))))
+  ([f n]
+    (let [args (vec (repeatedly n gensym))
+          body (list* f args)]
+      `(mcf ~args ~body))))
 
 
 (defn flip

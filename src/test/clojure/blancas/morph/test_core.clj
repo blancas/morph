@@ -283,23 +283,23 @@
 ;; |                     Curried Functions.                      |
 ;; +-------------------------------------------------------------+
 
-(defnc f2 "docstring" [x y] (+ x y))
-(defnc f3 "doc string" [x y z] (+ x y z))
-(defnc f4 "f4 doc" [w x y z] (+ w x y z))
-(defnc f5 "f5 doc" [v w x y z] (+ v w x y z))
-(defnc f6 "f6 doc" [u v w x y z] (+ u v w x y z))
-(defnc f7 "f7 doc" [t u v w x y z] (+ t u v w x y z))
-(defnc k2 "k2 doc" [x y] (- x y))
-(defnc k3 "k3 doc" [x y z] (* (- x y) z))
+(defcurry f2 "docstring" [x y] (+ x y))
+(defcurry f3 "doc string" [x y z] (+ x y z))
+(defcurry f4 "f4 doc" [w x y z] (+ w x y z))
+(defcurry f5 "f5 doc" [v w x y z] (+ v w x y z))
+(defcurry f6 "f6 doc" [u v w x y z] (+ u v w x y z))
+(defcurry f7 "f7 doc" [t u v w x y z] (+ t u v w x y z))
+(defcurry k2 "k2 doc" [x y] (- x y))
+(defcurry k3 "k3 doc" [x y z] (* (- x y) z))
 
 (deftest test-0500
-  (fact "defnc defines a curried two-arg function"
+  (fact "defcurry defines a curried two-arg function"
 	(f2 3 4) => 7
 	(map (f2 3) (range 5)) => [3 4 5 6 7]))
 
 
 (deftest test-0505
-  (fact "defnc defines a curried three-arg function"
+  (fact "defcurry defines a curried three-arg function"
         (f3 1 2 3) => 6
         (map (f3 1 2) (range 5)) => [3 4 5 6 7])
   (fact "a curried function can be called as a total function"
@@ -312,7 +312,7 @@
 
 
 (deftest test-0510
-  (fact "defnc defines a curried four-arg function"
+  (fact "defcurry defines a curried four-arg function"
 	(f4 1 2 3 4) => 10
         (map (f4 1 2 3) (range 5)) => [6 7 8 9 10])
   (fact "a curried function can be called as a total function"
@@ -324,7 +324,7 @@
 
 
 (deftest test-0515
-  (fact "defnc defines a curried five-arg function"
+  (fact "defcurry defines a curried five-arg function"
 	(f5 1 2 3 4 5) => 15
         (map (f5 1 2 3 4) (range 5)) => [10 11 12 13 14])
   (fact "a curried function can be called as a total function"
@@ -336,7 +336,7 @@
 
 
 (deftest test-0520
-  (fact "defnc defines a curried six-arg function"
+  (fact "defcurry defines a curried six-arg function"
 	(f6 1 2 3 4 5 6) => 21
         (map (f6 1 2 3 4 5) (range 5)) => [15 16 17 18 19])
   (fact "a curried function can be called as a total function"
@@ -348,7 +348,7 @@
 
 
 (deftest test-0525
-  (fact "defnc defines a curried seven-arg function"
+  (fact "defcurry defines a curried seven-arg function"
 	(f7 1 2 3 4 5 6 7) => 28
         (map (f7 1 2 3 4 5 6) (range 5)) => [21 22 23 24 25])
   (fact "a curried function can be called as a total function"
