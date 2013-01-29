@@ -12,6 +12,88 @@
 
 
 ;; +-------------------------------------------------------------+
+;; |                     Curried Functions.                      |
+;; +-------------------------------------------------------------+
+
+
+(defmacro mcf
+  "Makes a curried function off the arglist and body."
+  [args & body]
+  (case (count args)
+    2  (let [[x y] args]
+         `(fn f
+	    ([~x] (fn [~y] (~'f ~x ~y)))
+	    ([~x ~y] ~@body)))
+    3  (let [[x y z] args]
+	 `(fn f
+            ([~x] (mcf [~y ~z] ~@body))
+            ([~x ~y] (fn [~z] (~'f ~x ~y ~z)))
+            ([~x ~y ~z] ~@body)))
+    4  (let [[w x y z] args]
+	 `(fn f
+            ([~w] (mcf [~x ~y ~z] ~@body))
+            ([~w ~x] (mcf [~y ~z] ~@body))
+            ([~w ~x ~y] (fn [~z] (~'f ~w ~x ~y ~z)))
+            ([~w ~x ~y ~z] ~@body)))
+    5  (let [[v w x y z] args]
+	 `(fn f
+            ([~v] (mcf [~w ~x ~y ~z] ~@body))
+            ([~v ~w] (mcf [~x ~y ~z] ~@body))
+            ([~v ~w ~x] (mcf [~y ~z] ~@body))
+            ([~v ~w ~x ~y] (fn [~z] (~'f ~v ~w ~x ~y ~z)))
+            ([~v ~w ~x ~y ~z] ~@body)))
+    6  (let [[u v w x y z] args]
+	 `(fn f
+            ([~u] (mcf [~v ~w ~x ~y ~z] ~@body))
+            ([~u ~v] (mcf [~w ~x ~y ~z] ~@body))
+            ([~u ~v ~w] (mcf [~x ~y ~z] ~@body))
+            ([~u ~v ~w ~x] (mcf [~y ~z] ~@body))
+            ([~u ~v ~w ~x ~y] (fn [~z] (~'f ~u ~v ~w ~x ~y ~z)))
+            ([~u ~v ~w ~x ~y ~z] ~@body)))
+    7  (let [[t u v w x y z] args]
+	 `(fn f
+            ([~t] (mcf [~u ~v ~w ~x ~y ~z] ~@body))
+            ([~t ~u] (mcf [~v ~w ~x ~y ~z] ~@body))
+            ([~t ~u ~v] (mcf [~w ~x ~y ~z] ~@body))
+            ([~t ~u ~v ~w] (mcf [~x ~y ~z] ~@body))
+            ([~t ~u ~v ~w ~x] (mcf [~y ~z] ~@body))
+            ([~t ~u ~v ~w ~x ~y] (fn [~z] (~'f ~t ~u ~v ~w ~x ~y ~z)))
+            ([~t ~u ~v ~w ~x ~y ~z] ~@body)))))
+
+
+(defmacro defcurry
+  "Defines a curried function that may be called as a partial
+   or total function using the regular function-call notation.
+   Partial applications yield functions that work the same way.
+   When all arguments have been given it evaluates the body
+   and returns its value. The comment string is required."
+  [fname doc args & body]
+   `(do (def ~fname ~doc (mcf ~args ~@body))
+	(alter-meta! (var ~fname) assoc :arglists (list '~args))
+	(var ~fname)))
+
+
+(defmacro curry
+  "Returns a curried version of a function. Variadic functions
+   must supplied the number of arguments."
+  ([f]
+    (let [args (-> f resolve meta :arglists first)]
+      (assert (not (some #{'&} args)) "can't curry a variadic function")
+      `(curry ~f ~(count args))))
+  ([f n]
+    (let [args (vec (repeatedly n gensym))
+          body (list* f args)]
+      `(mcf ~args ~body))))
+
+
+(defn flip
+  "Returns a version of f with its first two arguments reversed."
+  [f]
+  (fn [x y & more]
+    (apply f y x more)))
+
+
+;; +-------------------------------------------------------------+
 ;; |                          Monoids.                           |
 ;; +-------------------------------------------------------------+
 
@@ -228,13 +310,13 @@
     (fun [this f] (->Pair (f (fst this)) (f (snd this)))))
 
 
-(defn fmap
+(defcurry fmap
   "A version of (fun) where the functor is last."
   [function functor]
   (fun functor function))
 
 
-(defn <$
+(defcurry <$
   "Maps a functor to the same value."
   [value functor]
   (fmap (constantly value) functor))
@@ -364,85 +446,3 @@
   (mzero [this]
     "Creates an identity value of type this with value x.
      The receiver is used to dispatch the right constructor."))
-
-
-;; +-------------------------------------------------------------+
-;; |                     Curried Functions.                      |
-;; +-------------------------------------------------------------+
-
-
-(defmacro mcf
-  "Makes a curried function off the arglist and body."
-  [args & body]
-  (case (count args)
-    2  (let [[x y] args]
-         `(fn f
-	    ([~x] (fn [~y] (~'f ~x ~y)))
-	    ([~x ~y] ~@body)))
-    3  (let [[x y z] args]
-	 `(fn f
-            ([~x] (mcf [~y ~z] ~@body))
-            ([~x ~y] (fn [~z] (~'f ~x ~y ~z)))
-            ([~x ~y ~z] ~@body)))
-    4  (let [[w x y z] args]
-	 `(fn f
-            ([~w] (mcf [~x ~y ~z] ~@body))
-            ([~w ~x] (mcf [~y ~z] ~@body))
-            ([~w ~x ~y] (fn [~z] (~'f ~w ~x ~y ~z)))
-            ([~w ~x ~y ~z] ~@body)))
-    5  (let [[v w x y z] args]
-	 `(fn f
-            ([~v] (mcf [~w ~x ~y ~z] ~@body))
-            ([~v ~w] (mcf [~x ~y ~z] ~@body))
-            ([~v ~w ~x] (mcf [~y ~z] ~@body))
-            ([~v ~w ~x ~y] (fn [~z] (~'f ~v ~w ~x ~y ~z)))
-            ([~v ~w ~x ~y ~z] ~@body)))
-    6  (let [[u v w x y z] args]
-	 `(fn f
-            ([~u] (mcf [~v ~w ~x ~y ~z] ~@body))
-            ([~u ~v] (mcf [~w ~x ~y ~z] ~@body))
-            ([~u ~v ~w] (mcf [~x ~y ~z] ~@body))
-            ([~u ~v ~w ~x] (mcf [~y ~z] ~@body))
-            ([~u ~v ~w ~x ~y] (fn [~z] (~'f ~u ~v ~w ~x ~y ~z)))
-            ([~u ~v ~w ~x ~y ~z] ~@body)))
-    7  (let [[t u v w x y z] args]
-	 `(fn f
-            ([~t] (mcf [~u ~v ~w ~x ~y ~z] ~@body))
-            ([~t ~u] (mcf [~v ~w ~x ~y ~z] ~@body))
-            ([~t ~u ~v] (mcf [~w ~x ~y ~z] ~@body))
-            ([~t ~u ~v ~w] (mcf [~x ~y ~z] ~@body))
-            ([~t ~u ~v ~w ~x] (mcf [~y ~z] ~@body))
-            ([~t ~u ~v ~w ~x ~y] (fn [~z] (~'f ~t ~u ~v ~w ~x ~y ~z)))
-            ([~t ~u ~v ~w ~x ~y ~z] ~@body)))))
-
-
-(defmacro defcurry
-  "Defines a curried function that may be called as a partial
-   or total function using the regular function-call notation.
-   Partial applications yield functions that work the same way.
-   When all arguments have been given it evaluates the body
-   and returns its value. The comment string is required."
-  [fname doc args & body]
-   `(do (def ~fname ~doc (mcf ~args ~@body))
-	(alter-meta! (var ~fname) assoc :arglists (list '~args))
-	(var ~fname)))
-
-
-(defmacro curry
-  "Returns a curried version of a function. Variadic functions
-   must supplied the number of arguments."
-  ([f]
-    (let [args (-> f resolve meta :arglists first)]
-      (assert (not (some #{'&} args)) "can't curry a variadic function")
-      `(curry ~f ~(count args))))
-  ([f n]
-    (let [args (vec (repeatedly n gensym))
-          body (list* f args)]
-      `(mcf ~args ~body))))
-
-
-(defn flip
-  "Returns a version of f with its first two arguments reversed."
-  [f]
-  (fn [x y & more]
-    (apply f y x more)))
