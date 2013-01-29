@@ -61,11 +61,9 @@
       (monad [x this] (return this (f x))))
   Applicative
     (app [this m]
-      (monad [f this]
-        (if (coll? m)
-	  (monad [ms (seqm m)]
-            (return this (apply f ms)))
-	  (monad [x m] (return this (f x))))))
+      (if (coll? m)
+        (monad [f this ms (seqm m)] (return this (apply f ms)))
+	(monad [f this x m] (return this (f x)))))
   Monad
     (>>= [m k]
       (->MaybeT (.ret m)
@@ -132,11 +130,9 @@
       (monad [x this] (return this (f x))))
   Applicative
     (app [this m]
-      (monad [f this]
-        (if (coll? m)
-	  (monad [ms (seqm m)]
-            (return this (apply f ms)))
-	  (monad [x m] (return this (f x))))))
+      (if (coll? m)
+        (monad [f this ms (seqm m)] (return this (apply f ms)))
+	(monad [f this x m] (return this (f x)))))
   Monad
     (>>= [m k]
       (->EitherT (.ret m)
