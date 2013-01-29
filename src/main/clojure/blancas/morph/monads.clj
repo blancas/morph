@@ -39,7 +39,7 @@
     (fun [this f]
       (monad [x this] (id (f x))))
   Applicative
-    (<*> [this m]
+    (app [this m]
       (if (coll? m)
         (monad [f this ms (seqm m)] (id (apply f ms)))
 	(monad [f this x m] (id (f x)))))
@@ -110,7 +110,7 @@
     (fun [this f]
       (monad [x this] (just (f x))))
   Applicative
-    (<*> [this m]
+    (app [this m]
       (if (coll? m)
         (monad [f this ms (seqm m)] (just (apply f ms)))
 	(monad [f this x m] (just (f x)))))
@@ -195,7 +195,7 @@
     (fun [this f]
       (monad [x this] (right (f x))))
   Applicative
-    (<*> [this m]
+    (app [this m]
       (if (coll? m)
         (monad [f this ms (seqm m)] (right (apply f ms)))
 	(monad [f this x m] (right (f x)))))
@@ -257,7 +257,7 @@
     (fun [this f]
       (monad [x this] (reader (f x))))
   Applicative
-    (<*> [this x]
+    (app [this x]
       (if (coll? x)
         (monad [f this vs (seqm x)] (reader (apply f vs)))
         (monad [f this v x] (reader (f v)))))
@@ -324,7 +324,7 @@
     (fun [this f]
       (monad [x this] (return this (f x))))
   Applicative
-    (<*> [this m]
+    (app [this m]
       (if (coll? m)
         (monad [f this vs (seqm m)] (return this (apply f vs)))
         (monad [f this x m] (return this (f x)))))
@@ -401,7 +401,7 @@
     (fun [this f]
       (monad [x this] (state (f x))))
   Applicative
-    (<*> [this m]
+    (app [this m]
       (if (coll? m)
         (monad [f this vs (seqm m)] (state (apply f vs)))
         (monad [f this v m] (state (f v)))))

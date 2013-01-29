@@ -72,7 +72,7 @@
 	  (eval-stid (<*> sf2 st2) 0) => "JIB-JAB")
     (fact "A state transformer applicative functor can take multiple args"
 	  (eval-stid (<*> (return-stid +)
-			  [st1 st1 st1 st1]) 0) => 48)))
+			  st1 st1 st1 st1) 0) => 48)))
 
 
 (deftest test-0020
@@ -167,7 +167,7 @@
 	  (eval-sm (<*> sf1 st1) 0) => 144
 	  (eval-sm (<*> sf2 st2) 0) => "JIB-JAB")
     (fact "A state transformer applicative functor can take multiple args"
-	  (eval-sm (<*> (make-sm +) [st1 st1 st1 st1]) 0) => 48)))
+	  (eval-sm (<*> (make-sm +) st1 st1 st1 st1) 0) => 48)))
 
 
 (deftest test-0060
@@ -362,7 +362,7 @@
 	  (eval-wtid (<*> wf2 wm2))  => "FOOBAR")
     (fact "A WriterT can be applied to multiple args"
 	  (eval-wtid (<*> (make-wtid +)
-			  [wm1 wm1 wm1 wm1])) => 240)))
+			  wm1 wm1 wm1 wm1)) => 240)))
 
 
 (deftest test-0220
@@ -540,9 +540,9 @@
 	  (eval-mtid (<*> mf2 mm2))  => "FOOBAR")
     (fact "A MaybeT can be applied to multiple args"
 	  (eval-mtid (<*> (make-mtid +)
-		          [mm1 mm1 mm1 mm1 mm1])) => 300)
+		          mm1 mm1 mm1 mm1 mm1)) => 300)
     (fact "A nothing value will short-circuit the computation to nothing"
-	  (<*> (make-mtid +) [mm1 mm1 mm3 mm1 mm1 mm1]) => mt-nothing?)))
+	  (<*> (make-mtid +) mm1 mm1 mm3 mm1 mm1 mm1) => mt-nothing?)))
 
 
 (deftest test-0325
@@ -647,7 +647,7 @@
 	  (right-etid (<*> ef2 em2)) => "FOOBAR")
     (fact "A Right can be applied to multiple args"
 	  (right-etid (<*> (make-right-etid +)
-			   [em1 em1 em1 em1])) => 240)))
+			   em1 em1 em1 em1)) => 240)))
 
 
 (deftest test-0425

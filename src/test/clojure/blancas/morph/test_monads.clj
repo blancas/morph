@@ -63,7 +63,7 @@
 	idm1 (id 512)
 	idm2 (id 128)]
     (fact "an identity is an applicative functor - multiple args, numeric"
-	  (run-id (<*> idf1 [idm1 idm2])) => 640)))
+	  (run-id (<*> idf1 idm1 idm2)) => 640)))
 
 
 (deftest test-0025
@@ -158,7 +158,7 @@
 	mm2 (just 99)
 	mm3 (just 20)]
     (fact "A Maybe value is an applicative functor -- multiple args"
-	  (run-just (<*> mf1 [mm1 mm2 mm3])) => 99)))
+	  (run-just (<*> mf1 mm1 mm2 mm3)) => 99)))
 
 
 (deftest test-0245
@@ -168,7 +168,7 @@
 	mm3 (just 20)
 	mm4 (just 35)]
     (fact "applicative functor -- multiple args, short-circuit Nothing"
-	  (<*> mf1 [mm1 mm2 mm3 mm4]) => nothing?)))
+	  (<*> mf1 mm1 mm2 mm3 mm4) => nothing?)))
 
 
 (deftest test-0250
@@ -439,7 +439,7 @@
 	  (eval-writer (<*> wf2 wm2))  => "FOOBAR")
     (fact "A Writer can be applied to multiple args"
 	  (eval-writer (<*> (return wm1 +)
-			    [wm1 wm1 wm1 wm1])) => 240)))
+			    wm1 wm1 wm1 wm1)) => 240)))
 
 
 (deftest test-0820
@@ -525,7 +525,7 @@
 	  (eval-state (<*> sf2 sm2) 0)  => "JIB-JAB")
     (fact "A State monad can be applied to multiple args"
 	  (eval-state (<*> (state +)
-			   [sm1 sm1 sm1 sm1]) 0) => 240)))
+			   sm1 sm1 sm1 sm1) 0) => 240)))
 
 
 (deftest test-1020

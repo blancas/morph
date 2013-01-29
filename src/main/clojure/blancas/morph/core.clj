@@ -330,8 +330,16 @@
 (defprotocol Applicative
   "A functor with application, providing operations to embed pure
    expressions and sequence computations to combine their results."
-  (<*> [this x]
-    "Applies the first functor on its argument."))
+  (app [this x]
+    "Applies the first functor on its argument, which is either
+     a single value of a collection."))
+
+
+(defn <*>
+  "Applies the receiver to the rest of the arguments. Unlike (app),
+   this function takes a variable number of arguments."
+  [af f & more]
+  (app af (if more (conj more f) f)))
 
 
 ;; +-------------------------------------------------------------+
