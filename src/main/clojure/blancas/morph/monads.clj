@@ -58,9 +58,13 @@
 (deftype Maybe [value])
 
 
-(def just
-  "Maybe constructor for a boxed value."
-  ->Maybe)
+(defmacro just
+  "Maybe constructor for a boxed value. It takes a value or a form
+   that may evaluate to nil or throw an exception, both of which
+   cases result in a Nothing value."
+  [form]
+  (let [t (gensym)]
+    `(->Maybe (try ~form (catch Throwable ~t nil)))))
 
 
 (def nothing

@@ -1,3 +1,4 @@
+
 ;; Copyright (c) 2013 Armando Blancas. All rights reserved.
 ;; The use and distribution terms for this software are covered by the
 ;; Eclipse Public License 1.0 (http://opensource.org/licenses/eclipse-1.0.php)
@@ -75,7 +76,7 @@
 
 (defn lift-mt
   "Lifts an inner monad into the outer MaybeT monad."
-  [im] (->MaybeT (fn [x] (return im x)) (liftm just im)))
+  [im] (->MaybeT (fn [x] (return im x)) (liftm ->Maybe im)))
 
 
 ;; +-------------------------------------------------------------+

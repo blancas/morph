@@ -14,7 +14,7 @@
 
 (defn make-sm
   "Makes an instance of the composed monad StateT s Just x."
-  [x] (state-t just x))
+  [x] (state-t ->Maybe x))
 
 (def nothing-sm
   "Makes an instance of the compose monad StateT s Nothing.
@@ -50,7 +50,7 @@
 
 ;; (put-st) replaces the state on the outer monad.
 (def m7 (monad [x m1
-                _ (put-st just "State: Now is the time")
+                _ (put-st ->Maybe "State: Now is the time")
                 y m2
 		z m3]
           (make-sm (+ x y z))))

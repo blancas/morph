@@ -211,7 +211,7 @@
 
 (deftest test-0270
   (fact "map-maybe maps f over a collection and collects Just values."
-	(map-maybe just (range 10)) => (range 10)))
+	(map-maybe ->Maybe (range 10)) => (range 10)))
 
 
 (deftest test-0275
