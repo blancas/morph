@@ -20,44 +20,44 @@
   "Makes a curried function off the arglist and body."
   [args & body]
   (case (count args)
-    2  (let [[x y] args]
-         `(fn f
-	    ([~x] (fn [~y] (~'f ~x ~y)))
+    2  (let [[x y] args f (gensym)]
+         `(fn ~f
+	    ([~x] (fn [~y] (~f ~x ~y)))
 	    ([~x ~y] ~@body)))
-    3  (let [[x y z] args]
-	 `(fn f
+    3  (let [[x y z] args f (gensym)]
+	 `(fn ~f
             ([~x] (mcf [~y ~z] ~@body))
-            ([~x ~y] (fn [~z] (~'f ~x ~y ~z)))
+            ([~x ~y] (fn [~z] (~f ~x ~y ~z)))
             ([~x ~y ~z] ~@body)))
-    4  (let [[w x y z] args]
-	 `(fn f
+    4  (let [[w x y z] args f (gensym)]
+	 `(fn ~f
             ([~w] (mcf [~x ~y ~z] ~@body))
             ([~w ~x] (mcf [~y ~z] ~@body))
-            ([~w ~x ~y] (fn [~z] (~'f ~w ~x ~y ~z)))
+            ([~w ~x ~y] (fn [~z] (~f ~w ~x ~y ~z)))
             ([~w ~x ~y ~z] ~@body)))
-    5  (let [[v w x y z] args]
-	 `(fn f
+    5  (let [[v w x y z] args f (gensym)]
+	 `(fn ~f
             ([~v] (mcf [~w ~x ~y ~z] ~@body))
             ([~v ~w] (mcf [~x ~y ~z] ~@body))
             ([~v ~w ~x] (mcf [~y ~z] ~@body))
-            ([~v ~w ~x ~y] (fn [~z] (~'f ~v ~w ~x ~y ~z)))
+            ([~v ~w ~x ~y] (fn [~z] (~f ~v ~w ~x ~y ~z)))
             ([~v ~w ~x ~y ~z] ~@body)))
-    6  (let [[u v w x y z] args]
-	 `(fn f
+    6  (let [[u v w x y z] args f (gensym)]
+	 `(fn ~f
             ([~u] (mcf [~v ~w ~x ~y ~z] ~@body))
             ([~u ~v] (mcf [~w ~x ~y ~z] ~@body))
             ([~u ~v ~w] (mcf [~x ~y ~z] ~@body))
             ([~u ~v ~w ~x] (mcf [~y ~z] ~@body))
-            ([~u ~v ~w ~x ~y] (fn [~z] (~'f ~u ~v ~w ~x ~y ~z)))
+            ([~u ~v ~w ~x ~y] (fn [~z] (~f ~u ~v ~w ~x ~y ~z)))
             ([~u ~v ~w ~x ~y ~z] ~@body)))
-    7  (let [[t u v w x y z] args]
-	 `(fn f
+    7  (let [[t u v w x y z] args f (gensym)]
+	 `(fn ~f
             ([~t] (mcf [~u ~v ~w ~x ~y ~z] ~@body))
             ([~t ~u] (mcf [~v ~w ~x ~y ~z] ~@body))
             ([~t ~u ~v] (mcf [~w ~x ~y ~z] ~@body))
             ([~t ~u ~v ~w] (mcf [~x ~y ~z] ~@body))
             ([~t ~u ~v ~w ~x] (mcf [~y ~z] ~@body))
-            ([~t ~u ~v ~w ~x ~y] (fn [~z] (~'f ~t ~u ~v ~w ~x ~y ~z)))
+            ([~t ~u ~v ~w ~x ~y] (fn [~z] (~f ~t ~u ~v ~w ~x ~y ~z)))
             ([~t ~u ~v ~w ~x ~y ~z] ~@body)))))
 
 
