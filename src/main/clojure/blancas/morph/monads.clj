@@ -150,12 +150,26 @@
 
 (defn left
   "Constructor for a Left value."
-  [x] (->Either x nil))
+  [x] (->Either (or x "nil value") nil))
 
 
 (defn right
   "Constructor for a Right value."
   [x] (->Either nil x))
+
+
+(defmacro make-either
+  "Either constructor for a boxed value. It takes a value or a form
+   that may evaluate to nil or throw an exception, both of which
+   cases result in a Left value. Otherwise it is a Right value."
+  [form]
+  (let [v (gensym) t (gensym)]
+    `(try
+       (if-let [~v ~form]
+         (right ~v)
+         (left "return value is nil"))
+       (catch Throwable ~t 
+         (left (or (.getMessage ~t) (class ~t)))))))
 
 
 (defn run-left
