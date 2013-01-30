@@ -220,6 +220,22 @@
 	  (map-maybe f (range 12)) => '(0 -2 -4 -6 -8 -10))))
 
 
+(deftest test-0280
+  (let [mm1 (maybe 80386)
+	mm2 (maybe even? 8086)
+	mm3 (maybe odd? 8086)]
+    (fact "(maybe) creates a Just x"
+          (run-just mm1) => 80386)
+    (fact "(maybe) can take a predicate and creates a Just x if it succeeds on x"
+          (run-just mm2) => 8086)
+    (fact "(maybe) can take a predicate and creates a Nothing if it fails on x"
+          (run-just mm3) => nil?)
+    (fact "(maybe) can also create a nothing"
+          (run-just (maybe nil)) => nil?)
+    (fact "(maybe) makes a Nothing if it catches an exception"
+          (run-just (maybe (throw (Exception.)))) => nil?)))
+  
+
 ;; +-------------------------------------------------------------+
 ;; |                      The Either Monad.                      |
 ;; +-------------------------------------------------------------+
@@ -325,6 +341,27 @@
   (let [f (fn [n] (if (even? n) (right (- n)) (left n)))]
     (fact "map-either filters out Left values."
 	  (map-either f (range 12)) => '(0 -2 -4 -6 -8 -10))))
+
+
+(deftest test-0460
+  (let [em1 (make-either 80386)
+	em2 (make-either "Not a real chip" nil)
+	em3 (make-either "Chip is not even" even? 8086)
+	em4 (make-either "Chip is not odd" odd? 8086)
+	em5 (make-either (throw (Exception. "bad!")))]
+    (fact "(either) creates a Right x"
+          (run-right em1) => 80386)
+    (fact "(either) creates a Left x"
+	  (run-left em2) => "Not a real chip"
+	  (run-right em2) => nil?)
+    (fact "(either) can take a predicate and creates a Right x if it succeeds on x"
+	  (run-left em3) => nil?
+          (run-right em3) => 8086)
+    (fact "(either) can take a predicate and creates a Left if it fails on x"
+	  (run-left em4) => "Chip is not odd"
+          (run-right em4) => nil?)
+    (fact "(either) makes a Left if it catches an exception"
+          (run-left em5) => "bad!")))
 
 
 ;; +-------------------------------------------------------------+

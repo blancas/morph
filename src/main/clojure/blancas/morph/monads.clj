@@ -175,9 +175,9 @@
    that may evaluate to nil or throw an exception, both of which
    cases result in a Left value. Otherwise it is a Right value."
   ([form]
-   `(make-either (constantly true) nil ~form))
+   `(make-either nil (constantly true) ~form))
   ([message form]
-   `(make-either (constantly true) ~message ~form))
+   `(make-either ~message (constantly true) ~form))
   ([message pred form]
    (let [v (gensym) t (gensym)]
      `(try
