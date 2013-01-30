@@ -178,7 +178,7 @@
    `(make-either (constantly true) nil ~form))
   ([message form]
    `(make-either (constantly true) ~message ~form))
-  ([pred message form]
+  ([message pred form]
    (let [v (gensym) t (gensym)]
      `(try
         (if-let [~v ~form]
