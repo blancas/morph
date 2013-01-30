@@ -145,7 +145,7 @@
 
 
 (defn justs
-  "Filters Just values from a collection."
+  "Filters Just values from a collection. Returns unboxed values."
   [coll]
   (for [m coll :when (just? m)]
     (run-just m)))
@@ -153,10 +153,8 @@
 
 (defn map-maybe
   "Maps a Maybe-producing function over a collection.
-   Returns a sequence with Nothing values removed."
-  [f coll]
-  (for [x (map f coll) :when (just? x)]
-    (run-just x)))
+   Filters out Nothing values and returns unboxed values."
+  [f coll] (justs (map f coll)))
 
 
 ;; +-------------------------------------------------------------+
@@ -215,7 +213,7 @@
 
 (defn right?
   "Tests if the receiver is a Right value."
-  [x] (not (nil? (run-right x))))
+  [x] (nil? (run-left x)))
 
 
 (defmacro either
