@@ -55,7 +55,14 @@
 ;; +-------------------------------------------------------------+
 
 
-(deftype Maybe [value])
+(deftype Maybe [value]
+  Object
+    (equals [this other]
+      (= value (.value other)))
+    (hashCode [this]
+      (if value (.hashCode value) 0))
+    (toString [this]
+      (with-out-str (print this))))
 
 
 (defn just
