@@ -76,7 +76,7 @@
 
 (defn lift-mt
   "Lifts an inner monad into the outer MaybeT monad."
-  [im] (->MaybeT (fn [x] (return im x)) (liftm ->Maybe im)))
+  [im] (->MaybeT (fn [x] (return im x)) (liftm just im)))
 
 
 ;; +-------------------------------------------------------------+

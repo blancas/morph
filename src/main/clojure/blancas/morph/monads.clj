@@ -58,18 +58,30 @@
 (deftype Maybe [value])
 
 
-(defmacro just
-  "Maybe constructor for a boxed value. It takes a value or a form
-   that may evaluate to nil or throw an exception, both of which
-   cases result in a Nothing value."
-  [form]
-  (let [t (gensym)]
-    `(->Maybe (try ~form (catch Throwable ~t nil)))))
+(defn just
+  "Maybe constructor. If x is not nil, it creates a Just value.
+   If x is nil it creates a Nothing."
+  [x] (->Maybe x))
 
 
 (def nothing
   "Maybe constructor for no value."
   (->Maybe nil))
+
+
+(defmacro maybe
+  "Maybe constructor for a boxed value. It takes a value or a form
+   that may evaluate to nil or throw an exception, both of which
+   cases result in a Nothing value."
+  ([form]
+   `(maybe (constantly true) ~form))
+  ([pred form]
+   (let [v (gensym)
+	 t (gensym)]
+     `(->Maybe (try
+		 (let [~v ~form]
+		   (if (~pred ~v) ~v))
+		 (catch java.lang.Exception ~t nil))))))
 
 
 (defn run-just
@@ -162,14 +174,21 @@
   "Either constructor for a boxed value. It takes a value or a form
    that may evaluate to nil or throw an exception, both of which
    cases result in a Left value. Otherwise it is a Right value."
-  [form]
-  (let [v (gensym) t (gensym)]
-    `(try
-       (if-let [~v ~form]
-         (right ~v)
-         (left "return value is nil"))
-       (catch Throwable ~t 
-         (left (or (.getMessage ~t) (class ~t)))))))
+  ([form]
+   `(make-either (constantly true) nil ~form))
+  ([message form]
+   `(make-either (constantly true) ~message ~form))
+  ([pred message form]
+   (let [v (gensym) t (gensym)]
+     `(try
+        (if-let [~v ~form]
+          (if (~pred ~v)
+	    (right ~v)
+	    (left (or ~message "failed predicate")))
+          (left (or ~message "nil value")))
+        (catch java.lang.Exception ~t
+          (left (str (if ~message (str ~message \newline))
+		     (or (.getMessage ~t) (class ~t)))))))))
 
 
 (defn run-left

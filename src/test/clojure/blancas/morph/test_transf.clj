@@ -119,7 +119,7 @@
 ;; =====================
 
 (defn make-sm
-  [x] (state-t ->Maybe x))
+  [x] (state-t just x))
 
 (def nothing-sm (state-t (fn [_] nothing) nil))
 
@@ -190,7 +190,7 @@
 (deftest test-0070
   (let [sm1 (make-sm 60)
 	sm2 (make-sm "jib-jab")
-	st1 (monad [x sm1 y sm2 z (get-st ->Maybe)]
+	st1 (monad [x sm1 y sm2 z (get-st just)]
 	      (make-sm (+ x (count y) z)))]
     (fact "(get-st) provides the state as a value in chained actions"
 	  (eval-sm st1 100) => 167)))

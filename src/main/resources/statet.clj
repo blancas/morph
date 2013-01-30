@@ -14,7 +14,7 @@
 
 (defn make-sm
   "Makes an instance of the composed monad StateT s Just x."
-  [x] (state-t ->Maybe x))
+  [x] (state-t just x))
 
 (def nothing-sm
   "Makes an instance of the compose monad StateT s Nothing.
