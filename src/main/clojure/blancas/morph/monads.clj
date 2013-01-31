@@ -172,7 +172,10 @@
 
 (defn right
   "Constructor for a Right value."
-  [x] (->Either nil x))
+  [x]
+  (if x
+    (->Either nil x)
+    (left nil)))
 
 
 (defmacro make-either
