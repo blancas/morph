@@ -220,19 +220,19 @@
 
 
 (defmacro either
-  "Evaluates m. If the result is Left, binds it to x
-   and evaluates left-form; otherwise binds it to y
-   and evaluates right-form."
-  [[[x y] m] left-form right-form]
+  "Evaluates m. If the result is Left, binds its Left contents
+   to v and evaluates left-form; otherwise binds its Right
+   contents to v and evaluates right-form."
+  [[v m] left-form right-form]
   `(if (left? ~m)
-     (let [~x (run-left ~m)] ~left-form)
-     (let [~y (run-right ~m)] ~right-form)))
+     (let [~v (run-left ~m)] ~left-form)
+     (let [~v (run-right ~m)] ~right-form)))
 
 
 (defmethod print-method Either [r, ^java.io.Writer w]
-  (either [[x y] r]
-    (print "Left" x)
-    (print "Right" y)))
+  (either [v r]
+    (print "Left" v)
+    (print "Right" v)))
 
 
 (extend-type Either
@@ -252,14 +252,14 @@
 
 
 (defn lefts
-  "Extracts the Left values from a collection."
+  "Extracts the Left values from a collection. Returns unboxed values."
   [coll]
   (for [x coll :when (left? x)]
     (run-left x)))
 
 
 (defn rights
-  "Extracts the Right values from a collection."
+  "Extracts the Right values from a collection. Returns unboxed values."
   [coll]
   (for [x coll :when (right? x)]
     (run-right x)))
@@ -267,10 +267,8 @@
 
 (defn map-either
   "Maps an Either-producing function over a collection.
-   Returns a sequence with Left values removed."
-  [f coll]
-  (for [x (map f coll) :when (right? x)]
-    (run-right x)))
+   Returns a sequence with Left values removed, as unboxed values."
+  [f coll] (rights (map f coll)))
 
 
 ;; +-------------------------------------------------------------+
