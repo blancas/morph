@@ -83,12 +83,10 @@
   ([form]
    `(maybe (constantly true) ~form))
   ([pred form]
-   (let [v (gensym)
-	 t (gensym)]
-     `(->Maybe (try
-		 (let [~v ~form]
-		   (if (~pred ~v) ~v))
-		 (catch java.lang.Exception ~t nil))))))
+   `(->Maybe (try
+	       (let [v# ~form]
+		 (if (~pred v#) v#))
+	       (catch java.lang.Exception t# nil)))))
 
 
 (defn run-just
@@ -187,16 +185,15 @@
   ([message form]
    `(make-either ~message (constantly true) ~form))
   ([message pred form]
-   (let [v (gensym) t (gensym)]
-     `(try
-        (if-let [~v ~form]
-          (if (~pred ~v)
-	    (right ~v)
-	    (left (or ~message "failed predicate")))
-          (left (or ~message "nil value")))
-        (catch java.lang.Exception ~t
-          (left (str (if ~message (str ~message \newline))
-		     (or (.getMessage ~t) (class ~t)))))))))
+   `(try
+      (if-let [v# ~form]
+        (if (~pred v#)
+	  (right v#)
+	  (left (or ~message "failed predicate")))
+        (left (or ~message "nil value")))
+      (catch java.lang.Exception t#
+        (left (str (if ~message (str ~message \newline))
+		   (or (.getMessage t#) (class t#))))))))
 
 
 (defn run-left
