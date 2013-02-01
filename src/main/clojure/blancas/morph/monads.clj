@@ -220,10 +220,12 @@
   "Evaluates m. If the result is Left, binds its Left contents
    to v and evaluates left-form; otherwise binds its Right
    contents to v and evaluates right-form."
-  [[v m] left-form right-form]
-  `(if (left? ~m)
-     (let [~v (run-left ~m)] ~left-form)
-     (let [~v (run-right ~m)] ~right-form)))
+  ([[v m] right-form]
+   `(either [~v ~m] nil ~right-form))
+  ([[v m] left-form right-form]
+   `(if (left? ~m)
+      (let [~v (run-left ~m)] ~left-form)
+      (let [~v (run-right ~m)] ~right-form))))
 
 
 (defmethod print-method Either [r, ^java.io.Writer w]
