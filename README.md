@@ -7,7 +7,7 @@ and that encapsulate the boilerplate employed by many programming techniques.
 ## Features
 
 * Implementation based on protocols and data types.
-* Predefined monoids and functors; extended by Clojure collections.
+* Predefined monoids and functors; with support for Clojure collections.
 * Monads: Identity, Maybe, Either, Reader, Writer, State.
 * Monad Transformers: MaybeT, EitherT, ReaderT, WriterT, StateT.
 * Support for curried functions.
