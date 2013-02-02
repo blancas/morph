@@ -252,16 +252,60 @@
   (print (snd r))
   (.write w ")"))
 
-;; +----------+
-;; |  String  |
-;; +----------+
+;; +----------------------------------+
+;; |  Monoids for Clojure data types. |
+;; +----------------------------------+
 
-(def str-id "The identity value for the String monoid." "")
+(def empty-string      "")
+(def empty-list        ())
+(def empty-vector      [])
+(def empty-hash-set    #{})
+(def empty-sorted-set  (sorted-set))
+(def empty-array-map   {})
+(def empty-hash-map    (empty (hash-map 0 0)))
+(def empty-sorted-map  (sorted-map))
+(def empty-queue       clojure.lang.PersistentQueue/EMPTY)
 
 (extend-protocol Monoid
   java.lang.String
-    (mempty [this] str-id)
-    (mappend [this x] (str this x)))
+    (mempty [this] empty-string)
+    (mappend [this x] (str this x))
+  clojure.lang.PersistentList
+    (mempty [this] empty-list)
+    (mappend [this x] (concat this x))
+  clojure.lang.PersistentList$EmptyList
+    (mempty [this] empty-list)
+    (mappend [this x] (concat this x))
+  clojure.lang.PersistentVector
+    (mempty [this] empty-vector)
+    (mappend [this x] (into this x))
+  clojure.lang.APersistentVector$SubVector
+    (mempty [this] empty-vector)
+    (mappend [this x] (into this x))
+  clojure.lang.PersistentHashSet
+    (mempty [this] empty-hash-set)
+    (mappend [this x] (into this x))
+  clojure.lang.PersistentTreeSet
+    (mempty [this] empty-sorted-set)
+    (mappend [this x] (into this x))
+  clojure.lang.PersistentArrayMap
+    (mempty [this] empty-array-map)
+    (mappend [this x] (into this x))
+  clojure.lang.PersistentHashMap
+    (mempty [this] empty-hash-map)
+    (mappend [this x] (into this x))
+  clojure.lang.PersistentTreeMap
+    (mempty [this] empty-sorted-map)
+    (mappend [this x] (into this x))
+  clojure.lang.PersistentQueue
+    (mempty [this] empty-queue)
+    (mappend [this x] (into this x))
+  clojure.lang.Cons
+    (mempty [this] empty-list)
+    (mappend [this x] (concat this x))
+  clojure.lang.LazySeq
+    (mempty [this] (lazy-seq ()))
+    (mappend [this x] (concat this x)))
 
 
 ;; +-------------------------------------------------------------+
@@ -285,23 +329,23 @@
   clojure.lang.PersistentList$EmptyList
     (fun [this f] (lazy-seq ()))
   clojure.lang.PersistentVector
-    (fun [this f] (map f this))
+    (fun [this f] (into [] (map f this)))
   clojure.lang.APersistentVector$SubVector
-    (fun [this f] (map f this))
+    (fun [this f] (into [] (map f this)))
   clojure.lang.PersistentHashSet
-    (fun [this f] (map f this))
+    (fun [this f] (into #{} (map f this)))
   clojure.lang.PersistentTreeSet
-    (fun [this f] (map f this))
+    (fun [this f] (into (sorted-set) (map f this)))
   clojure.lang.PersistentArrayMap
-    (fun [this f] (for [[k v] this] (clojure.lang.MapEntry. k (f v))))
+    (fun [this f] (into {} (for [[k v] this] [k (f v)])))
   clojure.lang.PersistentHashMap
-    (fun [this f] (for [[k v] this] (clojure.lang.MapEntry. k (f v))))
+    (fun [this f] (into (empty this) (for [[k v] this] [k (f v)])))
   clojure.lang.PersistentTreeMap
-    (fun [this f] (for [[k v] this] (clojure.lang.MapEntry. k (f v))))
+    (fun [this f] (into (sorted-map) (for [[k v] this] [k (f v)])))
   clojure.lang.PersistentQueue
-    (fun [this f] (map f this))
+    (fun [this f] (into clojure.lang.PersistentQueue/EMPTY (map f this)))
   clojure.lang.Cons
-    (fun [this f] (map f this))
+    (fun [this f] (cons (f (first this)) (map f (rest this))))
   clojure.lang.IFn
     (fun [this f] (comp f this))
   clojure.lang.LazySeq

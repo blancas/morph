@@ -441,7 +441,7 @@
 
 
 (deftest test-0800
-  (let [wm1 (writer 60 str-id)
+  (let [wm1 (writer 60 "")
 	wm2 (writer 777 "foobar")]
     (fact "(writer x) makes a Writer value with mempty string output."
 	  (eval-writer wm1) => 60
@@ -451,7 +451,7 @@
 	  (exec-writer wm2) => "foobar")))
 
 (deftest test-0805
-  (let [wm1 (writer 60 str-id)
+  (let [wm1 (writer 60 "")
 	wm2 (writer 777 "foobar")]
     (fact "A Writer prints as Writer x y"
 	  (with-out-str (print wm1)) => "Writer(60,)"

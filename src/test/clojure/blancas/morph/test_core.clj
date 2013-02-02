@@ -1,3 +1,4 @@
+
 ;; Copyright (c) 2013 Armando Blancas. All rights reserved.
 ;; The use and distribution terms for this software are covered by the
 ;; Eclipse Public License 1.0 (http://opensource.org/licenses/eclipse-1.0.php)
@@ -150,7 +151,7 @@
 
 
 (deftest test-0060
-  (let [m1 (->Pair (->Sum 50) str-id)
+  (let [m1 (->Pair (->Sum 50) "")
 	m2 (->Pair (->Sum 15) "jib")
 	m3 (->Pair (->Sum 20) "-jab")
 	m4 (->Pair (->Sum 20) "zap")]
@@ -185,6 +186,78 @@
 	  (snd m4)       => "showing jib-jab")))
 
 
+(deftest test-0080
+  (let [m1 (mconcat ["now" " " "is" " " "the" " " "time"])]
+    (fact "(mconcat) works on the String monoid"
+	  m1 => "now is the time")))
+
+
+(deftest test-0080-05
+  (let [m1 (mconcat ['(1 2) '(3 4) '(5 6)])]
+    (fact "(mconcat) works on the list monoid"
+	  m1 => '(1 2 3 4 5 6))))
+
+
+(deftest test-0080-10
+  (let [m1 (mconcat [() '(1 2 3 4) '(5 6)])]
+    (fact "(mconcat) works on the empty list monoid"
+	  m1 => '(1 2 3 4 5 6))))
+
+
+(deftest test-0080-15
+  (let [m1 (mconcat [(subvec [1 2 3 4] 0 2) [3 4] [5 6]])]
+    (fact "(mconcat) works on the subvector monoid"
+	  m1 => [1 2 3 4 5 6])))
+
+
+(deftest test-0080-20
+  (let [m1 (mconcat [#{1 2} #{3 4} #{5 6}])]
+    (fact "(mconcat) works on the hash set monoid"
+	  m1 => #{1 2 3 4 5 6})))
+
+
+(deftest test-0080-25
+  (let [m1 (mconcat [(sorted-set 1 2) (sorted-set 3 4) (sorted-set 5 6)])]
+    (fact "(mconcat) works on the sorted set monoid"
+	  m1 => (sorted-set 1 2 3 4 5 6))))
+
+
+(deftest test-0080-30
+  (let [m1 (mconcat [{:a 2} {:b 4} {:c 6}])]
+    (fact "(mconcat) works on the array map monoid"
+	  m1 => {:a 2 :b 4 :c 6})))
+
+
+(deftest test-0080-35
+  (let [m1 (mconcat [(hash-map :a 2) (hash-map :b 4) (hash-map :c 6)])]
+    (fact "(mconcat) works on the hash map monoid"
+	  m1 => (hash-map :a 2 :b 4 :c 6))))
+
+
+(deftest test-0080-40
+  (let [m1 (mconcat [(sorted-map :a 2) (sorted-map :b 4) (sorted-map :c 6)])]
+    (fact "(mconcat) works on the sorted map monoid"
+	  m1 => (sorted-map :a 2 :b 4 :c 6))))
+
+
+(deftest test-0080-45
+  (let [m1 (mconcat [(conj empty-queue 1) (conj empty-queue 2) (conj empty-queue 3)])]
+    (fact "(mconcat) works on the queue monoid"
+	  m1 => (into empty-queue '(1 2 3)))))
+
+
+(deftest test-0080-50
+  (let [m1 (mconcat [(cons 1 nil) (cons 2 '(3 4)) (cons 5 '(6 7))])]
+    (fact "(mconcat) works on the Cons monoid"
+	  m1 => (cons 1 '(2 3 4 5 6 7)))))
+
+
+(deftest test-0080-60
+  (let [m1 (mconcat [(lazy-seq ()) (map inc '(-1 0 1)) (map dec '(4 5 6))])]
+    (fact "(mconcat) works on the lazy seq monoid"
+	  m1 => (seq '(0 1 2 3 4 5)))))
+
+
 ;; +-------------------------------------------------------------+
 ;; |                          Functors.                          |
 ;; +-------------------------------------------------------------+
@@ -211,42 +284,55 @@
 
 
 (deftest test-0120
-  (fact "a hash set is a functor"
-	(fmap square #{3 7 11 13 20}) => '(9 49 121 169 400)))
+  (let [s (fmap square #{3 7 11 13 20})]
+    (fact "a hash set is a functor"
+	  (count s) => 5
+	  (s 9)     => 9
+	  (s 49)    => 49
+	  (s 121)   => 121
+	  (s 169)   => 169
+	  (s 400)   => 400)))
 
 
 (deftest test-0125
-  (fact "a sorted set is a functor"
-	(fmap square (sorted-set 8 3 7 12 6 4)) => '(9 16 36 49 64 144)))
+  (let [s (fmap square (sorted-set 8 3 7 12 6 4))]
+    (fact "a sorted set is a functor"
+	  (count s) => 6
+	  (s 9)     => 9
+	  (s 16)    => 16
+	  (s 36)    => 36
+	  (s 49)    => 49
+	  (s 64)    => 64
+	  (s 144)   => 144))
 
 
 (deftest test-0130
   (fact "an array map is a functor"
-	(fmap square (array-map :one 20 :two 30)) => '([:one 400] [:two 900])))
+	(fmap square (array-map :one 20 :two 30)) => {:one 400 :two 900}))
 
 
 (deftest test-0135
   (fact "a hash map is a functor"
-	(fmap square (hash-map :one 20 :two 30)) => '([:one 400] [:two 900])))
+	(fmap square (hash-map :one 20 :two 30)) => {:one 400 :two 900})))
 
 
 (deftest test-0140
   (fact "a sorted map is a functor"
-	(fmap square (sorted-map :one 20 :two 30)) => '([:one 400] [:two 900])))
+	(fmap square (sorted-map :one 20 :two 30)) => {:one 400 :two 900}))
 
 
 (deftest test-0145
   (let [e (clojure.lang.PersistentQueue/EMPTY)
 	q (-> e (conj 2) (conj 4) (conj 8) (conj 12))]
-  (fact "a queue is a functor"
-	(fmap square q) => '(4 16 64 144))))
+    (fact "a queue is a functor"
+	  (fmap square q) => '(4 16 64 144))))
 
 
 (deftest test-0150
   (let [e []
 	c (->> e (cons 2) (cons 4) (cons 8) (cons 12))]
-  (fact "a queue is a functor"
-	(fmap square c) => '(144 64 16 4))))
+    (fact "a queue is a functor"
+	  (fmap square c) => '(144 64 16 4))))
 
 
 (deftest test-0155

@@ -14,7 +14,7 @@
 
 (defn make-ws
   "Makes an instance of the composed monad WriterT String State."
-  [x] (writer-t state x	str-id))
+  [x] (writer-t state x	empty-string))
 
 ;; Convenience functions that extract and then evaluate the inner
 ;; State monad; which is the opposite order of the constructor.
@@ -48,7 +48,7 @@
 ;; Using lift we can work with inner monads and convert
 ;; them to the outer monad. Here we use all the data.
 (def m6 (monad [x m1
-                _ (lift-wt (put-state "State: Now is the time") str-id)
+                _ (lift-wt (put-state "State: Now is the time") empty-string)
                 _ (tell-wt state "Wrote: What, me worry?") 
                 y m2
 		z m3]

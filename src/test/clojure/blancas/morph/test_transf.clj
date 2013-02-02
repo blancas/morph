@@ -313,7 +313,7 @@
 ;; =========================
 
 (defn make-wtid
-  ([a] (writer-t id a str-id))
+  ([a] (writer-t id a ""))
   ([a w] (writer-t id a w)))
 
 (defn run-wtid
@@ -415,7 +415,7 @@
 ;; ======================
 
 (defn make-ws
-  [x] (writer-t state x str-id))
+  [x] (writer-t state x ""))
 
 (defn eval-ws
   [m s] (eval-state (eval-writer-t m) s))
@@ -427,7 +427,7 @@
   [m s] (eval-state (exec-writer-t m) s))
 
 (defn liftw
-  [m] (lift-wt m str-id))
+  [m] (lift-wt m ""))
 
 (defn tellw
   [s] (tell-wt state s))
