@@ -357,8 +357,10 @@
 
 (defn writer
   "Writer monad constructor for value a and output w.
-   The value w must implement Monoid."
-  [a w] (->Writer a w))
+   The value w must implement Monoid. If w is not
+   supplied, it defaults to the empty vector."
+  ([a] (->Writer a []))
+  ([a w] (->Writer a w)))
 
 
 (extend-type Writer
