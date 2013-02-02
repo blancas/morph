@@ -6,13 +6,12 @@ and that encapsulate the boilerplate employed by many programming techniques.
 
 ## Features
 
-* Implementation based on Protocols and Types.
-* Predefined monoids for common tasks.
-* Protocol Functor extended for Clojure concrete types.
+* Implementation based on protocols and data types.
+* Predefined monoids and functors; extended by Clojure collections.
 * Monads: Identity, Maybe, Either, Reader, Writer, State.
-* Library of generic functions for monads.
 * Monad Transformers: MaybeT, EitherT, ReaderT, WriterT, StateT.
 * Support for curried functions.
+* Library of generic functions for the above constructs.
 * Sample monads in `src/main/resources`.
 
 ## Setup
