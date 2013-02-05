@@ -1,4 +1,4 @@
-(ns ^{:doc "A sample State Monad Transformer."
+(ns ^{:doc "A sample State Transformer."
       :author "Armando Blancas"}
   statet
   (:use [blancas.morph core monads transf]))

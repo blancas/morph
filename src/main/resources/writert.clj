@@ -1,4 +1,4 @@
-(ns ^{:doc "A sample Writer Monad Transformer."
+(ns ^{:doc "A sample Writer Transformer."
       :author "Armando Blancas"}
   writert
   (:use [blancas.morph core monads transf]))
