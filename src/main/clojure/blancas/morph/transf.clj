@@ -325,12 +325,14 @@
 
 
 (defn lift-wt
-  "Lifts an inner monad into the outer WriterT monad
-   with an output value w."
-  [im w]
-  (->WriterT (fn [x] (return im x))
-	     (mempty w)
-             (monad [x im] (return im (->Pair x w)))))
+  "Lifts an inner monad into the outer WriterT monad with
+   an output value w, which defaults to the empty vector."
+  ([im]
+   (lift-wt im empty-vector))
+  ([im w]
+   (->WriterT (fn [x] (return im x))
+	      (mempty w)
+              (monad [x im] (return im (->Pair x w))))))
 
 
 ;; +-------------------------------------------------------------+
