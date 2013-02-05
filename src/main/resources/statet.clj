@@ -33,7 +33,7 @@
   [m s] (run-just (eval-state-t m s)))
 
 (defn exec-sm
-  "Retuns the final state of the outer monad as a Just value."
+  "Returns the final state of the outer monad as a Just value."
   [m s] (run-just (exec-state-t m s)))
 
 ;; Create monadic values.

@@ -24,7 +24,7 @@
   [m s] (eval-state (eval-writer-t m) s))
 
 (defn exec-ws
-  "Retuns the final state of the inner monad."
+  "Returns the final state of the inner monad."
   [m s] (exec-state (eval-writer-t m) s))
 
 (defn get-log
