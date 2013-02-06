@@ -12,7 +12,7 @@ and that encapsulate the boilerplate employed by many programming techniques.
 * Monad Transformers: MaybeT, EitherT, ReaderT, WriterT, StateT.
 * Support for curried functions.
 * Library of generic functions for the above constructs.
-* Sample monads in `src/main/resources`.
+* Sample code in `src/main/resources`.
 
 ## Setup
 
@@ -89,6 +89,8 @@ Now we evaluate some expressions with `table` as the initial state.
 ## Documentation
 
 Morph is documented in the [Wiki](https://github.com/blancas/morph/wiki).
+
+Browse the Codox [Morph v0.1.0 API](http://blancas.github.com/morph).
 
 To generate the API docs (in the `codox` directory):
 
