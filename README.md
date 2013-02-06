@@ -34,7 +34,7 @@ Maven:
 
 ## Sample Usage
 
-A simple expression evaluator applies the State monad; it can declare variables and clear the symbol table. Access to the table is direct as if it were global, though all functions are pure.
+A simple expression evaluator uses the State monad; it can declare variables and clear the symbol table. Access to the symbol table is direct as if it were global, though all functions are pure.
 ```clojure
 (use 'blancas.morph.core
      'blancas.morph.monads)
@@ -44,26 +44,23 @@ A simple expression evaluator applies the State monad; it can declare variables 
 (declare run)
 
 (defn calc
-  "Evaluates and unboxes the arguments; then applies the operator
-   on them and returns the result as in a new state value."
+  "Evaluates and unboxes the operands; then applies the
+   operator and returns the result as new state value."
   [op x y]
   (monad [a (run x) b (run y)]
     (state (op a b))))
 
 (defn const
   "Returns a state value with a looked-up value or the given number."
-  [x]
-  (if (symbol? x) (gets x) (state x)))
+  [x] (if (symbol? x) (gets x) (state x)))
 
 (defn decl
   "Declares a variable as (var = val); value is used in-place."
-  [x y] 
-  (>> (modify-state assoc x y) (state y)))
+  [x y] (>> (modify-state assoc x y) (state y)))
 
 (defn clear
   "Clears the symbol table as (val %); value is used in-place."
-  [x]
-  (>> (put-state {}) (state x)))
+  [x] (>> (put-state {}) (state x)))
 
 (defn run
   "Dispatches on an expression or a single value."
@@ -79,7 +76,7 @@ A simple expression evaluator applies the State monad; it can declare variables 
     (const op)))
 ```
 
-Now we evaluate some expressions with the table as the initial state.
+Now we evaluate some expressions with `table` as the initial state.
 ```clojure
 (eval-state (run '((9 / 3) + (2 * (PI - E)))) table)
 ;; 3.846622
