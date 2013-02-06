@@ -32,6 +32,63 @@ Maven:
 </dependency>
 ```
 
+## Sample Usage
+
+A simple expression evaluator applies the State monad; it can declare variables and clear the symbol table. Access to the table is direct as if it were global, though all functions are pure.
+```clojure
+(use 'blancas.morph.core
+     'blancas.morph.monads)
+
+(def table {'DEG 57.295779 'E 2.718281 'PI 3.141592})
+
+(declare run)
+
+(defn calc
+  "Evaluates and unboxes the arguments; then applies the operator
+   on them and returns the result as in a new state value."
+  [op x y]
+  (monad [a (run x) b (run y)]
+    (state (op a b))))
+
+(defn const
+  "Returns a state value with a looked-up value or the given number."
+  [x]
+  (if (symbol? x) (gets x) (state x)))
+
+(defn decl
+  "Declares a variable as (var = val); value is used in-place."
+  [x y] 
+  (>> (modify-state assoc x y) (state y)))
+
+(defn clear
+  "Clears the symbol table as (val %); value is used in-place."
+  [x]
+  (>> (put-state {}) (state x)))
+
+(defn run
+  "Dispatches on an expression or a single value."
+  [op]
+  (if (list? op)
+    (case (second op)
+      + (calc + (first op) (last op))
+      - (calc - (first op) (last op))
+      * (calc * (first op) (last op))
+      / (calc / (first op) (last op))
+      = (decl   (first op) (last op))
+      % (clear  (first op)))
+    (const op)))
+```
+
+Now we evaluate some expressions with the table as the initial state.
+```clojure
+(eval-state (run '((9 / 3) + (2 * (PI - E)))) table)
+;; 3.846622
+(exec-state (run '((180 / (k = 30)) + (k * (PI - E)))) table)
+;; {PI 3.141592, E 2.718281, DEG 57.295779, k 30}
+(exec-state (run '(((180 %) / (k = 30)) + ((j = 5) * (k - j)))) table)
+;; {j 5, k 30}
+```
+
 ## Documentation
 
 Morph is documented in the [Wiki](https://github.com/blancas/morph/wiki).
