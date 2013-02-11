@@ -256,11 +256,20 @@
 
 
 (deftest test-0410
-  (let [em1 (right 5005)]
+  (let [em1 (right 5005)
+	em2 (right "foo")
+	em3 (right false)
+	em4 (right true)]
     (fact "(right) makes a Right value"
 	  (run-right em1) =>   5005
 	  em1             =>   right?
-	  em1           =not=> left?)))
+	  em1           =not=> left?)
+    (fact "(right) with a string"
+	  (run-right em2) => "foo")
+    (fact "(right) with a false"
+	  (run-right em3) => false?)
+    (fact "(right) with a true value"
+	  (run-right em4) => true?)))
 
 
 (deftest test-0415
