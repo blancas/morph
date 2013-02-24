@@ -66,11 +66,14 @@
    or total function using the regular function-call notation.
    Partial applications yield functions that work the same way.
    When all arguments have been given it evaluates the body
-   and returns its value. The comment string is required."
-  [fname doc args & body]
-   `(do (def ~fname ~doc (mcf ~args ~@body))
-	(alter-meta! (var ~fname) assoc :arglists (list '~args))
-	(var ~fname)))
+   and returns its value. Takes an optional docstring, as defn."
+  [fname & [f1 & fs :as all]]
+  (let [[doc parts] (if (string? f1) [f1 fs] [(str fname) all])
+        args (first parts)
+        body (rest parts)]
+    `(do (def ~fname ~doc (mcf ~args ~@body))
+	 (alter-meta! (var ~fname) assoc :arglists (list '~args))
+	 (var ~fname))))
 
 
 (defmacro curry
