@@ -223,9 +223,10 @@
   ([[v m] right-form]
    `(either [~v ~m] nil ~right-form))
   ([[v m] left-form right-form]
-   `(if (left? ~m)
-      (let [~v (run-left ~m)] ~left-form)
-      (let [~v (run-right ~m)] ~right-form))))
+   `(let [val# ~m]
+      (if (left? val#)
+        (let [~v (run-left val#)] ~left-form)
+        (let [~v (run-right val#)] ~right-form)))))
 
 
 (defmethod print-method Either [r, ^java.io.Writer w]
