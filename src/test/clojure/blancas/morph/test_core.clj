@@ -1,4 +1,3 @@
-
 ;; Copyright (c) 2013 Armando Blancas. All rights reserved.
 ;; The use and distribution terms for this software are covered by the
 ;; Eclipse Public License 1.0 (http://opensource.org/licenses/eclipse-1.0.php)
@@ -475,3 +474,17 @@
   (fact "flip swaps the first two args in a curried function"
 	(let [g (flip k3)]
 	  (g 4 10 8) => 48)))
+
+
+(defcurry f0 "docstring" [] 12345)
+(defcurry f1 "docstring" [x] (* x x))
+
+(deftest test-0600
+  (fact "defcurry defines a zero-arg function"
+	(f0) => 12345))
+
+
+(deftest test-0605
+  (fact "defcurry defines a one-arg function"
+	(f1 7) => 49
+	(map f1 (range 5)) => [0 1 4 9 16]))

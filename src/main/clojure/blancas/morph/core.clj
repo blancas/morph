@@ -20,6 +20,10 @@
   "Makes a curried function off the arglist and body."
   [args & body]
   (case (count args)
+    0  (let [f (gensym)]
+         `(fn ~f [] ~@body))
+    1  (let [[x] args f (gensym)]
+         `(fn ~f [~x] ~@body))
     2  (let [[x y] args f (gensym)]
          `(fn ~f
 	    ([~x] (fn [~y] (~f ~x ~y)))
