@@ -23,24 +23,28 @@
     0  (let [f (gensym)]
          `(fn ~f [] ~@body))
     1  (let [[x] args f (gensym)]
-         `(fn ~f [~x] ~@body))
+         `(fn ~f ([] ~f) ([~x] ~@body)))
     2  (let [[x y] args f (gensym)]
          `(fn ~f
+	    ([] ~f)
 	    ([~x] (fn [~y] (~f ~x ~y)))
 	    ([~x ~y] ~@body)))
     3  (let [[x y z] args f (gensym)]
 	 `(fn ~f
+	    ([] ~f)
             ([~x] (mcf [~y ~z] ~@body))
             ([~x ~y] (fn [~z] (~f ~x ~y ~z)))
             ([~x ~y ~z] ~@body)))
     4  (let [[w x y z] args f (gensym)]
 	 `(fn ~f
+	    ([] ~f)
             ([~w] (mcf [~x ~y ~z] ~@body))
             ([~w ~x] (mcf [~y ~z] ~@body))
             ([~w ~x ~y] (fn [~z] (~f ~w ~x ~y ~z)))
             ([~w ~x ~y ~z] ~@body)))
     5  (let [[v w x y z] args f (gensym)]
 	 `(fn ~f
+	    ([] ~f)
             ([~v] (mcf [~w ~x ~y ~z] ~@body))
             ([~v ~w] (mcf [~x ~y ~z] ~@body))
             ([~v ~w ~x] (mcf [~y ~z] ~@body))
@@ -48,6 +52,7 @@
             ([~v ~w ~x ~y ~z] ~@body)))
     6  (let [[u v w x y z] args f (gensym)]
 	 `(fn ~f
+	    ([] ~f)
             ([~u] (mcf [~v ~w ~x ~y ~z] ~@body))
             ([~u ~v] (mcf [~w ~x ~y ~z] ~@body))
             ([~u ~v ~w] (mcf [~x ~y ~z] ~@body))
@@ -56,6 +61,7 @@
             ([~u ~v ~w ~x ~y ~z] ~@body)))
     7  (let [[t u v w x y z] args f (gensym)]
 	 `(fn ~f
+	    ([] ~f)
             ([~t] (mcf [~u ~v ~w ~x ~y ~z] ~@body))
             ([~t ~u] (mcf [~v ~w ~x ~y ~z] ~@body))
             ([~t ~u ~v] (mcf [~w ~x ~y ~z] ~@body))
