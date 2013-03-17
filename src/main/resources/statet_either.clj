@@ -26,15 +26,15 @@
      (make-left e#)
      (make-right e#)))
 
-(defn run-se
+(defn run-ste
   "Returns the Either inner monad."
   [m s] (eval-state-t m s))
 
-(defn eval-se
+(defn eval-ste
   "Returns the Right value of the inner monad."
   [m s] (run-right (eval-state-t m s)))
 
-(defn exec-se
+(defn exec-ste
   "Returns the final state of the outer monad as an Either value."
   [m s] (run-right (exec-state-t m s)))
 
@@ -66,11 +66,11 @@
     (const op)))
 
 (defn run-samples []
-  (let [v1 (run-se  (run '((9 / 3) + (2 * (PI - E)))) table)
-	v2 (eval-se (run '((9 / 3) + (2 * (PI - E)))) table)
-	v3 (run-se  (run '((9 / 0) + (2 * (PI - E)))) table)
-	v4 (eval-se (run '((9 / 0) + (2 * (PI - E)))) table)
-        v5 (exec-se (run '((9 / (k = 3)) + (k * (PI - E)))) table)]
+  (let [v1 (run-ste  (run '((9 / 3) + (2 * (PI - E)))) table)
+	v2 (eval-ste (run '((9 / 3) + (2 * (PI - E)))) table)
+	v3 (run-ste  (run '((9 / 0) + (2 * (PI - E)))) table)
+	v4 (eval-ste (run '((9 / 0) + (2 * (PI - E)))) table)
+        v5 (exec-ste (run '((9 / (k = 3)) + (k * (PI - E)))) table)]
     (println "run="   v1)
     (println "eval="  v2)
     (println "run="   v3)

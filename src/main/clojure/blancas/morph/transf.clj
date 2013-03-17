@@ -1,4 +1,3 @@
-
 ;; Copyright (c) 2013 Armando Blancas. All rights reserved.
 ;; The use and distribution terms for this software are covered by the
 ;; Eclipse Public License 1.0 (http://opensource.org/licenses/eclipse-1.0.php)
@@ -432,3 +431,50 @@
   [im]
   (->StateT (fn [x] (return im x))
 	     (fn [s] (monad [x im] (return im (->Pair x s))))))
+
+
+;; +-------------------------------------------------------------+
+;; |          The Imperative monad: StateT Either.               |
+;; +-------------------------------------------------------------+
+
+
+(defn ->left
+  "Makes a Left value inside a State. This makes possible
+   to get a Left off `run-se` whose value is not a pair."
+  [x] (->StateT left (fn [_] (left x))))
+
+
+(defn ->right
+  "Makes a Right value inside a State."
+  [x] (state-t right x))
+
+
+(defn run-se
+  "Returns the Either inner monad."
+  [m s] (eval-state-t m s))
+
+
+(def get-se
+  "Gets the outer monad's state as a Right value."
+  (->StateT right (fn [s] (right (->Pair s s)))))
+
+
+(defn put-se
+  "Sets the outer monad's state."
+  [s]
+  (->StateT right (fn [_] (right (->Pair nil s)))))
+
+
+(defn modify-se
+  "Tranforms the outer monad's state, to be returned as a
+   Right value. The function f is applied on the current state,
+   along with any optional arguments."
+  [f & more]
+  (->StateT right (fn [s] (right (->Pair nil (apply f s more))))))
+
+
+(defn gets-se
+  "Like get-st, but applies the function f (usually a selector)
+   on the state being return as a Right value."
+  [f]
+  (->StateT right (fn [s] (right (->Pair (f s) s)))))
