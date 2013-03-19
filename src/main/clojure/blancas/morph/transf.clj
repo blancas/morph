@@ -439,8 +439,7 @@
 
 
 (defn ->left
-  "Makes a Left value inside a State. This makes possible
-   to get a Left off `run-se` whose value is not a pair."
+  "Makes a Left value inside a State."
   [x] (->StateT left (fn [_] (left x))))
 
 
@@ -452,6 +451,16 @@
 (defn run-se
   "Returns the Either inner monad."
   [m s] (eval-state-t m s))
+
+
+(defn eval-se
+  "Returns the inner monad as a Right value."
+  [m s] (run-right (eval-state-t m s)))
+
+
+(defn exec-se
+  "Returns the final state of the outer monad as a Right value."
+  [m s] (run-right (exec-state-t m s)))
 
 
 (def get-se
