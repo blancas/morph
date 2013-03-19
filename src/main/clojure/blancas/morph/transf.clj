@@ -448,6 +448,27 @@
   [x] (state-t right x))
 
 
+(defmacro ->either
+  "Makes an Either value inside a State; may be a Left or Right.
+   It takes a value or a form that may evaluate to nil or throw
+   an exception, both of which cases result in a Left value;
+   otherwise it is a Right."
+  ([form]
+   `(->either nil (constantly true) ~form))
+  ([message form]
+   `(->either ~message (constantly true) ~form))
+  ([message pred form]
+   `(try
+      (if-let [v# ~form]
+        (if (~pred v#)
+	  (->right v#)
+	  (->left (or ~message "failed predicate")))
+        (->left (or ~message "nil value")))
+      (catch java.lang.Exception t#
+        (->left (str (if ~message (str ~message \newline))
+		     (or (.getMessage t#) (class t#))))))))
+
+
 (defn run-se
   "Returns the Either inner monad."
   [m s] (eval-state-t m s))
