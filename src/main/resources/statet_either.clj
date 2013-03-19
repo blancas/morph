@@ -19,13 +19,6 @@
   "Makes an Right value inside a State."
   [x] (state-t right x))
 
-(defmacro state-either
-  "Makes an Either value inside a State; Can handle exceptions."
-  [x]
-  `(either [e# (make-either ~x)]
-     (make-left e#)
-     (make-right e#)))
-
 (defn run-ste
   "Returns the Either inner monad."
   [m s] (eval-state-t m s))
@@ -44,7 +37,7 @@
 
 (defn calc [op x y]
   (monad [a (run x) b (run y)]
-    (state-either (op a b))))
+    (lift-st (make-either (op a b)))))
 
 (defn const [x]
   (if (symbol? x)
