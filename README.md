@@ -8,7 +8,7 @@ and that encapsulate the boilerplate employed by many programming techniques.
 
 * Implementation based on protocols and data types.
 * Predefined monoids and functors; with support for Clojure collections.
-* Monads: Identity, Maybe, Either, Reader, Writer, State.
+* Monads: Identity, Maybe, Either, Reader, Writer, State, Imperative.
 * Monad Transformers: MaybeT, EitherT, ReaderT, WriterT, StateT.
 * Support for curried functions.
 * Library of generic functions for the above constructs.
@@ -19,7 +19,7 @@ and that encapsulate the boilerplate employed by many programming techniques.
 Leiningen:
 
 ```clojure
-[org.blancas/morph "0.1.0"]
+[org.blancas/morph "0.2.0"]
 ```
 
 Maven:
@@ -28,7 +28,7 @@ Maven:
 <dependency>
   <groupId>org.blancas</groupId>
   <artifactId>morph</artifactId>
-  <version>0.1.0</version>
+  <version>0.2.0</version>
 </dependency>
 ```
 
@@ -36,8 +36,7 @@ Maven:
 
 A simple expression evaluator uses the State monad; it can declare variables and clear the symbol table. Access to the symbol table is direct as if it were global, though all functions are pure.
 ```clojure
-(use 'blancas.morph.core
-     'blancas.morph.monads)
+(use '[blancas.morph core monads])
 
 (def table {'DEG 57.295779 'E 2.718281 'PI 3.141592})
 
@@ -88,9 +87,11 @@ Now we evaluate some expressions with `table` as the initial state.
 
 ## Documentation
 
+Browse the [change log](https://github.com/blancas/morph/wiki/Change-Log).
+
 Morph is documented in the [Wiki](https://github.com/blancas/morph/wiki).
 
-Browse the Codox [Morph v0.1.0 API](http://blancas.github.com/morph).
+Browse the Codox [Morph v0.2.0 API](http://blancas.github.com/morph).
 
 To generate the API docs (in the `codox` directory):
 
