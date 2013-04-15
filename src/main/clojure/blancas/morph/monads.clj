@@ -22,7 +22,7 @@
 
 (defn run-id
   "Returns the value held by an Identity type."
-  [m] (.value m))
+  [^Identity m] (.value m))
 
 
 (defmethod print-method Identity [r, ^java.io.Writer w]
@@ -58,7 +58,7 @@
 (deftype Maybe [value]
   Object
     (equals [this other]
-      (= value (.value other)))
+      (= value (.value ^Maybe other)))
     (hashCode [this]
       (if value (.hashCode value) 0))
     (toString [this]
@@ -91,17 +91,17 @@
 
 (defn run-just
   "Returns the boxed value of m."
-  [m] (.value m))
+  [^Maybe m] (.value m))
 
 
 (defn just?
   "Checks for a maybe with a value."
-  [m] (not (nil? (.value m))))
+  [^Maybe m] (not (nil? (.value m))))
 
 
 (defn nothing?
   "Checks for a maybe with nothing."
-  [m] (nil? (.value m)))
+  [^Maybe m] (nil? (.value m)))
 
 
 (defmacro may
@@ -198,12 +198,12 @@
 
 (defn run-left
   "Accessor for the Left value."
-  [m] (.left m))
+  [^Either m] (.left m))
 
 
 (defn run-right
   "Accessor for the Right value."
-  [m] (.right m))
+  [^Either m] (.right m))
 
 
 (defn left?
@@ -282,7 +282,7 @@
 (defn run-reader
   "Performs a Reader action m with an environment e.
    Returns the value produced by the action."
-  [m e] ((.f m) e))
+  [^Reader m e] ((.f m) e))
 
 
 (defmethod print-method Reader [r, ^java.io.Writer w]
@@ -340,19 +340,19 @@
 
 (defn eval-writer
   "Returns the value of a writer."
-  [m] (.value m))
+  [^Writer m] (.value m))
 
 
 (defn exec-writer
   "Returns the output of a writer."
-  [m] (.output m))
+  [^Writer m] (.output m))
 
 
 (defmethod print-method Writer [r, ^java.io.Writer w]
   (.write w "Writer(")
-  (print (.value r))
+  (print (.value ^Writer r))
   (.write w ",")
-  (print (.output r))
+  (print (.output ^Writer r))
   (.write w ")"))
 
 
@@ -418,7 +418,7 @@
 (defn run-state
   "Performs an action m with an initial state s.
    Returns a pair with the value and the state."
-  [m s] ((.f m) s))
+  [^State m s] ((.f m) s))
 
 
 (defn eval-state

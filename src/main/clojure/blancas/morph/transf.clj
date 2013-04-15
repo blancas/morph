@@ -39,13 +39,13 @@
 
 (defn run-just-t
   "Returns the inner monad, which contains a Maybe value."
-  [m] (.im m))
+  [^MaybeT m] (.im m))
 
 
 (defn eval-just-t
   "Returns the Just value inside the inner monad in a new instance;
    thus, from m (Just a) it returns m a."
-  [m]
+  [^MaybeT m]
   (monad [may (run-just-t m)]
     ((.ret m) (run-just may))))
 
@@ -90,7 +90,7 @@
 
 (defn run-either-t
   "Returns the inner monad, which contains an Either value."
-  [m] (.im m))
+  [^EitherT m] (.im m))
 
 
 (defn left-t
@@ -106,7 +106,7 @@
 (defn run-left-t
   "Accessor for the left value as an instance of the inner monad;
    in effect: m (Either e a) -> m e"
-  [m]
+  [^EitherT m]
   (monad [x (run-either-t m)]
     ((.ret m) (run-left x))))
 
@@ -114,7 +114,7 @@
 (defn run-right-t
   "Accessor for the right value as an instance of the inner monad;
    in effect: m (Either e a) -> m a"
-  [m]
+  [^EitherT m]
   (monad [x (run-either-t m)]
     ((.ret m) (run-right x))))
 
@@ -165,7 +165,7 @@
 (defn run-reader-t
   "Performs a Reader action m with an environment e.
    Returns the inner monad produced by the action."
-  [m e] ((.run m) e))
+  [^ReaderT m e] ((.run m) e))
 
 
 (defmethod print-method ReaderT [r, ^java.io.Writer w]
@@ -236,19 +236,19 @@
 
 (defn run-writer-t
   "Returns the inner monad."
-  [m] (.im m))
+  [^WriterT m] (.im m))
 
 
 (defn eval-writer-t
   "Returns the value part as an instance of the inner monad: m (a)."
-  [m]
+  [^WriterT m]
   (monad [p (run-writer-t m)]
     ((.ret m) (fst p))))
 
 
 (defn exec-writer-t
   "Returns the output part as an instance of the inner monad: m (w)."
-  [m]
+  [^WriterT m]
   (monad [p (run-writer-t m)]
     ((.ret m) (snd p))))
 
@@ -265,7 +265,7 @@
    takes a WriterT and an inner monad value."
   ([ret a w]
    (->WriterT ret (mempty w) (ret (->Pair a w))))
-  ([m im]
+  ([^WriterT m im]
    (->WriterT (.ret m) (.me m) im)))
 
 
@@ -298,7 +298,7 @@
 (defn listen-wt
   "Allows chained WriterT's to peek at the current output w
    by returning a value as a pair (a, w)."
-  [m]
+  [^WriterT m]
   (writer-t m (monad [p (run-writer-t m)]
                 ((.ret m) (->Pair p (snd p))))))
 
@@ -306,7 +306,7 @@
 (defn listens-wt
   "Allows chained WriterT's to peek at the current output w
    by returning a value as a pair (a, f w)."
-  [f m]
+  [f ^WriterT m]
   (writer-t m (monad [p (run-writer-t m)]
 	        (let [a (fst p) w (snd p)]
                   ((.ret m) (->Pair (->Pair a (f w)) w))))))
@@ -317,7 +317,7 @@
    but instead of output it adds an output-transforming function
    to the value's pair. Returns a WriterT whose output is the
    result of that function."
-  [m]
+  [^WriterT m]
   (writer-t m (monad [p (run-writer-t m)]
 	        (let [a (fst (fst p)) f (snd (fst p)) w (snd p)]
                   ((.ret m) (->Pair a (f w)))))))
@@ -352,13 +352,13 @@
 (defn run-state-t
   "Performs an action m using the initial state s; returns
    the wrapped monad having a pair of the value and state."
-  [m s] ((.run m) s))
+  [^StateT m s] ((.run m) s))
 
 
 (defn eval-state-t
   "Performs an action m using the initial state s; returns
    the wrapped monad with the resulting value."
-  [m s]
+  [^StateT m s]
   (monad [p (run-state-t m s)]
     ((.ret m) (fst p))))
 
@@ -366,7 +366,7 @@
 (defn exec-state-t
   "Performs an action m using the initial state s; returns
    the wrapped monad with the resulting state."
-  [m s]
+  [^StateT m s]
   (monad [p (run-state-t m s)]
     ((.ret m) (snd p))))
 

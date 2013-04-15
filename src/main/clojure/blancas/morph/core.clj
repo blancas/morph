@@ -138,16 +138,16 @@
 
 (deftype Sum [sum]
   Object
-    (equals [this x] (= sum (.sum x)))
+    (equals [this x] (= sum (.sum ^Sum x)))
   Comparable
-    (compareTo [this x] (compare sum (.sum x)))
+    (compareTo [this x] (compare sum (.sum ^Sum x)))
   Monoid
     (mempty [this] sum-id)
-    (mappend [this x] (Sum. (+ sum (.sum x)))))
+    (mappend [this x] (Sum. (+ sum (.sum ^Sum x)))))
 
   (defn sum
   "Accessor for a Sum type."
-  [s] (.sum s))
+  [^Sum s] (.sum s))
 
 (defmethod print-method Sum [r, ^java.io.Writer w]
   (.write w "Sum ")
@@ -163,16 +163,16 @@
 
 (deftype Product [product]
   Object
-    (equals [this x] (= product (.product x)))
+    (equals [this x] (= product (.product ^Product x)))
   Comparable
-    (compareTo [this x] (compare product (.product x)))
+    (compareTo [this x] (compare product (.product ^Product x)))
   Monoid
     (mempty [this] prod-id)
-    (mappend [this x] (Product. (* product (.product x)))))
+    (mappend [this x] (Product. (* product (.product ^Product x)))))
 
 (defn product
   "Accessor for a Product type."
-  [s] (.product s))
+  [^Product s] (.product s))
 
 (defmethod print-method Product [r, ^java.io.Writer w]
   (.write w "Product ")
@@ -188,16 +188,16 @@
 
 (deftype Any [any]
   Object
-    (equals [this x] (= any (.any x)))
+    (equals [this x] (= any (.any ^ Any x)))
   Comparable
-    (compareTo [this x] (compare any (.any x)))
+    (compareTo [this x] (compare any (.any ^Any x)))
   Monoid
     (mempty [this] any-id)
-    (mappend [this x] (Any. (or any (.any x)))))
+    (mappend [this x] (Any. (or any (.any ^Any x)))))
 
 (defn any
   "Accessor for the Any type."
-  [s] (.any s))
+  [^Any s] (.any s))
 
 (defmethod print-method Any [r, ^java.io.Writer w]
   (.write w "Any ")
@@ -213,16 +213,16 @@
 
 (deftype All [all]
   Object
-    (equals [this x] (= all (.all x)))
+    (equals [this x] (= all (.all ^All x)))
   Comparable
-    (compareTo [this x] (compare all (.all x)))
+    (compareTo [this x] (compare all (.all ^All x)))
   Monoid
     (mempty [this] all-id)
-    (mappend [this x] (All. (and all (.all x)))))
+    (mappend [this x] (All. (and all (.all ^All x)))))
 
 (defn all
   "Accessor for the All type."
-  [s] (.all s))
+  [^All s] (.all s))
 
 (defmethod print-method All [r, ^java.io.Writer w]
   (.write w "All ")
@@ -239,24 +239,25 @@
 (deftype Pair [fst snd]
   Object
     (equals [this x]
-      (and (= fst (.fst x)) (= snd (.snd x))))
+      (and (= fst (.fst ^Pair x)) (= snd (.snd ^Pair x))))
   Comparable
     (compareTo [this x]
-      (let [result (compare fst (.fst x))]
+      (let [result (compare fst (.fst ^Pair x))]
         (if (zero? result)
-          (compare snd (.snd x))
+          (compare snd (.snd ^Pair x))
           result)))
   Monoid
     (mempty [this] (Pair. (mempty fst) (mempty snd)))
-    (mappend [this x] (Pair. (mappend fst (.fst x)) (mappend snd (.snd x)))))
+    (mappend [this x] (Pair. (mappend fst (.fst ^Pair x))
+			     (mappend snd (.snd ^Pair x)))))
 
 (defn fst
   "Accessor for the first element of a pair."
-  [p] (.fst p))
+  [^Pair p] (.fst p))
 
 (defn snd
   "Accessor for the second element of a pair."
-  [p] (.snd p))
+  [^Pair p] (.snd p))
 
 (defmethod print-method Pair [r, ^java.io.Writer w]
   (.write w "Pair(")
