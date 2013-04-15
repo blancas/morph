@@ -1,4 +1,4 @@
-(defproject org.blancas/morph "0.2.0"
+(defproject org.blancas/morph "0.3.0"
   :description "A Library of Morphisms: Monoids, Functors, and Monads"
   :license {:name "Eclipse Public License"
 	    :url "http://www.eclipse.org/legal/epl-v10.html"}

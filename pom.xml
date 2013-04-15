@@ -5,7 +5,7 @@
   <groupId>org.blancas</groupId>
   <artifactId>morph</artifactId>
   <packaging>jar</packaging>
-  <version>0.2.0</version>
+  <version>0.3.0</version>
   <name>Morph</name>
   <description>A Library of Morphisms: Monoids, Functors, and Monads</description>
 
@@ -65,7 +65,7 @@
     <dependency>
       <groupId>criterium</groupId>
       <artifactId>criterium</artifactId>
-      <version>0.2.1</version>
+      <version>0.3.1</version>
     </dependency>
     <dependency>
       <groupId>org.clojure</groupId>
