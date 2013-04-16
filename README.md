@@ -14,23 +14,15 @@ and that encapsulate the boilerplate employed by many programming techniques.
 * Library of generic functions for the above constructs.
 * Sample code in `src/main/resources`.
 
-## Setup
+These constructs have a reputation of being hard to explain and even harder to 
+understand and to apply in everyday programming. I've made every effort to
+present them as regular techniques and idioms with practical benefits. Behind
+their strange or fancy names, these are just functions that work on data types.
 
-Leiningen:
-
-```clojure
-[org.blancas/morph "0.2.0"]
-```
-
-Maven:
-
-```xml
-<dependency>
-  <groupId>org.blancas</groupId>
-  <artifactId>morph</artifactId>
-  <version>0.2.0</version>
-</dependency>
-```
+An intuition of their behavior is all that's needed to take advantage of these
+functions; you may never need or want to write your own. I'm pleased with the
+power and simplicity these techniques have to offer and I hope you may find
+them useful as well.
 
 ## Sample Usage
 
@@ -85,13 +77,35 @@ Now we evaluate some expressions with `table` as the initial state.
 ;; {j 5, k 30}
 ```
 
+## Setup
+
+Leiningen:
+
+```clojure
+[org.blancas/morph "0.3.0"]
+```
+
+Maven:
+
+```xml
+<dependency>
+  <groupId>org.blancas</groupId>
+  <artifactId>morph</artifactId>
+  <version>0.3.0</version>
+</dependency>
+```
+
+### Changes for release 0.3.0:
+
+* Fixed slow, reflective calls by adding type hints.
+
 ## Documentation
 
 Browse the [change log](https://github.com/blancas/morph/wiki/Change-Log).
 
 Morph is documented in the [Wiki](https://github.com/blancas/morph/wiki).
 
-Browse the Codox [Morph v0.2.0 API](http://blancas.github.com/morph).
+Browse the Codox [Morph v0.3.0 API](http://blancas.github.com/morph).
 
 To generate the API docs (in the `codox` directory):
 
