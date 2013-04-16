@@ -101,7 +101,7 @@ Maven:
 
 ## Documentation
 
-Browse the [change log](https://github.com/blancas/morph/wiki/Change-Log).
+Browse the whole [change log](https://github.com/blancas/morph/wiki/Change-Log).
 
 Morph is documented in the [Wiki](https://github.com/blancas/morph/wiki).
 
