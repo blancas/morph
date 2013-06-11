@@ -277,9 +277,20 @@
 	(fmap square [3 7 11 13 20]) => '(9 49 121 169 400)))
 
 
+(deftest test-0110-05
+  (fact "a vector is a functor that produces a vector"
+	(fmap square [3 7 11 13 20]) => vector?))
+
+
 (deftest test-0115
   (fact "a subvector is a functor"
 	(fmap square (subvec [1 2 3 7 11 13 20] 2)) => '(9 49 121 169 400)))
+
+
+(deftest test-0115-05
+  (fact "a subvector is a functor that produces a subvector"
+	(instance? clojure.lang.PersistentVector
+	           (fmap square (subvec [1 2 3 7 11 13 20] 2))) => true))
 
 
 (deftest test-0120
@@ -291,6 +302,12 @@
 	  (s 121)   => 121
 	  (s 169)   => 169
 	  (s 400)   => 400)))
+
+
+(deftest test-0120-05
+  (let [s (fmap square #{3 7 11 13 20})]
+    (fact "a hash set is a functor that produces a set"
+	  s => set?)))
 
 
 (deftest test-0125
@@ -320,6 +337,13 @@
 	(fmap square (sorted-map :one 20 :two 30)) => {:one 400 :two 900}))
 
 
+(deftest test-0140-05
+  (fact "a map functor produces a map"
+	(fmap square (array-map :one 20 :two 30))  => map?
+	(fmap square (hash-map :one 20 :two 30))   => map?
+	(fmap square (sorted-map :one 20 :two 30)) => map?))
+
+
 (deftest test-0145
   (let [e (clojure.lang.PersistentQueue/EMPTY)
 	q (-> e (conj 2) (conj 4) (conj 8) (conj 12))]
@@ -344,6 +368,12 @@
   (let [lst (map identity '(3 7 11 13 20))]
     (fact "a lazy-seq is a functor"
 	  (fmap square lst) => '(9 49 121 169 400))))
+
+
+(deftest test-0160-05
+  (let [lst (map identity '(3 7 11 13 20))]
+    (fact "a lazy-seq is a functor that produces a lazy seq"
+	  (fmap square lst) => seq?)))
 
 
 (deftest test-0165
