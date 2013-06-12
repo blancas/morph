@@ -107,6 +107,39 @@
 
 
 ;; +-------------------------------------------------------------+
+;; |                      Lazy Evaluation.                       |
+;; +-------------------------------------------------------------+
+
+
+(defmacro deflazytype
+  "Like deftype but fields are evaluated lazily.
+
+   This macro creates a deftype definition and a constructor macro
+   that will delay its arguments. The type implements IKeywordLookup
+   so that fields may work as accessors like in defrecord. These
+   accessors will first force the field's value. Example:
+
+   (deflazytype MyRec [foo bar])  ;; defines MyRec, implements IKeywordLookup
+   (def rec (MyRec* form1 form2)) ;; returns immediately, won't eval forms
+   (:foo rec)                     ;; (force)'ed value of form1
+   (:bar rec)                     ;; (force)'ed value of form2"
+  [name fields]
+  (let [clauses (interleave (map (comp keyword str) fields)
+			    (for [f fields] (list 'clojure.core/force f)))
+	delays  (for [f fields] (list 'list (list 'quote 'clojure.core/delay) f))
+	ctorfun (symbol (str name "*"))
+	ctorsym (symbol (str name "."))
+	typdecl `(deftype ~name ~fields
+                   clojure.lang.IKeywordLookup
+                     (getLookupThunk [t1# k#]
+                       (reify clojure.lang.ILookupThunk
+                         (get [t2# tgt#] (case k# ~@clauses nil)))))
+	macdecl (list 'defmacro ctorfun fields
+		  (concat (list 'list  (list 'quote ctorsym)) delays))]
+    (list 'do typdecl macdecl)))
+
+
+;; +-------------------------------------------------------------+
 ;; |                          Monoids.                           |
 ;; +-------------------------------------------------------------+
 
