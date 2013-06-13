@@ -124,19 +124,17 @@
    (:foo rec)                     ;; (force)'ed value of form1
    (:bar rec)                     ;; (force)'ed value of form2"
   [name fields]
-  (let [clauses (interleave (map (comp keyword str) fields)
-			    (for [f fields] (list 'clojure.core/force f)))
-	delays  (for [f fields] (list 'list (list 'quote 'clojure.core/delay) f))
+  (let [clauses (interleave (map keyword fields) (for [f fields] `(force ~f)))
 	ctorfun (symbol (str name "*"))
-	ctorsym (symbol (str name "."))
-	typdecl `(deftype ~name ~fields
-                   clojure.lang.IKeywordLookup
-                     (getLookupThunk [t1# k#]
-                       (reify clojure.lang.ILookupThunk
-                         (get [t2# tgt#] (case k# ~@clauses nil)))))
-	macdecl (list 'defmacro ctorfun fields
-		  (concat (list 'list  (list 'quote ctorsym)) delays))]
-    (list 'do typdecl macdecl)))
+	delays  (for [f fields] `(list 'delay ~f))
+	ctorsym `(quote ~(symbol (str name ".")))]
+    `(do 
+       (deftype ~name ~fields
+         clojure.lang.IKeywordLookup
+           (getLookupThunk [t1# k#]
+             (reify clojure.lang.ILookupThunk
+               (get [t2# tgt#] (case k# ~@clauses nil)))))
+       (defmacro ~ctorfun ~fields `(~~ctorsym ~~@delays)))))
 
 
 ;; +-------------------------------------------------------------+
