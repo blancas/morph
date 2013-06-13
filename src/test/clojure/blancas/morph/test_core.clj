@@ -518,3 +518,17 @@
   (fact "defcurry defines a one-arg function"
 	(f1 7) => 49
 	(map f1 (range 5)) => [0 1 4 9 16]))
+
+
+;; +-------------------------------------------------------------+
+;; |                      Lazy Evaluation.                       |
+;; +-------------------------------------------------------------+
+
+
+(deflazytype MyType [foo bar])
+
+(deftest test-0700
+  (let [inst (MyType* 5005 "rifa")]
+    (fact "deflazytype defines a type that delays its fields"
+	  (:foo inst) => 5005
+	  (:bar inst) => "rifa")))
