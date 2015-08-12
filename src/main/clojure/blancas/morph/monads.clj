@@ -17,7 +17,14 @@
 ;; +-------------------------------------------------------------+
 
 
-(deftype Identity [value])
+(deftype Identity [value]
+  Object
+    (equals [this other]
+      (= value (.value ^Identity other)))
+    (hashCode [this]
+      (if value (.hashCode value) 0))
+    (toString [this]
+      (with-out-str (print this))))
 
 
 (defn run-id
@@ -160,7 +167,15 @@
 ;; +-------------------------------------------------------------+
 
 
-(deftype Either [left right])
+(deftype Either [left right]
+  Object
+    (equals [this other]
+      (and (= left (.left ^Either other))
+           (= right (.right ^Either other))))
+    (hashCode [this]
+      (if (or left right) (.hashCode [left right]) 0))
+    (toString [this]
+      (with-out-str (print this))))
 
 
 (defn left
